@@ -1,17 +1,30 @@
 package main
 
 import (
-	"fmt"
+        "fmt"
 	"io/ioutil"
 	"log"
 	"strconv"
 	"strings"
+        "flag"
 )
 
 var years []string = []string{"2020","2021","2022"}
-const ROOT_DIR string = "/mnt/cro.cz/Rundowns"
+var ROOT_DIR string = ""
 
+func init(){
+  flag.StringVar(&ROOT_DIR, "i", "/mnt/cro.cz/Rundowns","Please specify the input path")
+  flag.Parse()
 
+  if len(ROOT_DIR) == 0{
+    log.Fatal("Please specify the input folder -i ../..")
+  }
+
+  flag.Usage = func(){
+    fmt.Println("Usage of program:")
+    fmt.Println("./rundown_files_checker -i /path/to/annova/disk (full path to SMB mounted disk in your system)")
+  }
+}
 
 func main() {
 
