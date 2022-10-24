@@ -1,5 +1,7 @@
 # rundown_files_checker
 
+**The program finds wrongly organized OpenMedia rundown files within the given directory.**
+
 Program which detects:
 
 - bad modtimes in files whitin rundown repository (disk cro.cz)
