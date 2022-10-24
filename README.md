@@ -1,5 +1,6 @@
 # rundown_files_checker
-Program which founds
+
+Program which detects:
 
 - bad modtimes in files whitin rundown repository (disk cro.cz)
 - (todo) number of contacts per week
