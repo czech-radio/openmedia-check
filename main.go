@@ -11,18 +11,19 @@ import (
 
 // var years []string = []string{"2020","2021","2022"}
 var ROOT_DIR string = ""
+var OUTPUT string = ""
 
 func init() {
-	flag.StringVar(&ROOT_DIR, "i", "/mnt/cro.cz/Rundowns", "Please specify the input path")
+	flag.StringVar(&ROOT_DIR, "i", "", "Please specify the input path")
+	// flag.StringVar(&OUTPUT, "o", "log.txt", "Please specify the output file")
 	flag.Parse()
 
 	if len(ROOT_DIR) == 0 {
 		log.Fatal("Please specify the input folder -i ../..")
 	}
-
 	flag.Usage = func() {
 		fmt.Println("Usage of program:")
-		fmt.Println("./rundown_files_checker -i /path/to/openmedia/disk (full path to SMB mounted disk in your system)")
+		fmt.Println("./openmedia-files-checker -i /path/to/openmedia/Rundown (full path to Rundowns folder)")
 	}
 }
 
