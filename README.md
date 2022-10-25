@@ -13,7 +13,7 @@ Program which detects:
 ```powershell
 git clone https://github.com/czech-radio/openmedia-files-checker.git
 cd openmedia-files-checker
-make build
+make
 ./openmedia-files-checker -i /path/to/mounted/Rundowns/ [optional -o log.txt]
 ```
 
