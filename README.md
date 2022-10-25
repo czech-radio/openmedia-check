@@ -1,4 +1,4 @@
-# rundown_files_checker
+# openmedia-files-checker
 
 **The program finds wrongly organized OpenMedia rundown files within the given directory.**
 
@@ -8,9 +8,9 @@ Program which detects:
 - (todo) number of contacts per week
 - (todo) match contacts to given stations
 
-# running program
+## Installation
 
-```
+```powershell
 git clone https://github.com/K0F/rundown_files_checker.git
 cd rundown_files_checker
 go mod tidy
@@ -20,8 +20,8 @@ go build
 
 You should have mounted "Annova" `cro.cz` smb in `/mnt/cro.cz/` or change the path in source file
 
+When it runs well, you should see something like this on the output:
 
-when it runs well, you should see something like this on the output:
 ```
 2022/10/24 15:33:07 Checking Rundown count Year 2020
 2020/W12: comparing file modtime to foldername: 324/324 PASSED!
