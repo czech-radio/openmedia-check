@@ -14,7 +14,7 @@ Program which detects:
 git clone https://github.com/czech-radio/openmedia-files-checker.git
 cd openmedia-files-checker
 make build
-./openmedia-files-checker -i /path/to/mounted/Rundowns/
+./openmedia-files-checker -i /path/to/mounted/Rundowns/ [optional -o log.txt]
 ```
 
 You should have mounted "Annova" `cro.cz` smb in `/mnt/cro.cz/` or change the path in source file
