@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
+	"os"
 	"strconv"
 	"strings"
 )
@@ -12,30 +13,45 @@ import (
 // var years []string = []string{"2020","2021","2022"}
 var ROOT_DIR string = ""
 var OUTPUT string = ""
+var LOG bool = false
+var logfile os.File
 
 func init() {
 	flag.StringVar(&ROOT_DIR, "i", "", "Please specify the input path")
-	// flag.StringVar(&OUTPUT, "o", "log.txt", "Please specify the output file")
+	flag.StringVar(&OUTPUT, "o", "", "Please specify the output file")
 	flag.Parse()
 
-	if len(ROOT_DIR) == 0 {
+	if ROOT_DIR == "" {
 		log.Fatal("Please specify the input folder -i ../..")
+		return
 	}
+
+	if OUTPUT != "" {
+		LOG = true
+		log.Println("Creating logfile: " + OUTPUT)
+		logfile, err := os.OpenFile(OUTPUT, os.O_APPEND|os.O_CREATE|os.O_RDWR, 0666)
+		if err != nil {
+			log.Fatal("Cannot open output file for writing.")
+		}
+		log.SetOutput(logfile)
+	}
+
 	flag.Usage = func() {
 		fmt.Println("Usage of program:")
-		fmt.Println("./openmedia-files-checker -i /path/to/openmedia/Rundown (full path to Rundowns folder)")
+		fmt.Println("./openmedia-files-checker -i /path/to/openmedia/Rundown (full path to Rundowns folder) [-o logfile.txt]")
 	}
 }
 
 func main() {
-
 	years, err := ioutil.ReadDir(ROOT_DIR)
 	if err != nil {
-		log.Fatal("Input folder cannot be opened")
+		log.Fatal("Input folder cannot be opened.")
 	}
 	// years list
 	for _, year := range years {
+
 		log.Println("Checking Rundown count Year " + year.Name())
+
 		files, err := ioutil.ReadDir(ROOT_DIR + "/" + year.Name())
 		if err != nil {
 			log.Fatal(err)
@@ -76,13 +92,20 @@ func main() {
 			}
 
 			if checked == len(files) {
-				fmt.Println(year.Name() + "/" + f.Name() + ": comparing file modtime to foldername: " + fmt.Sprint(checked) + "/" + fmt.Sprint(len(files)) + " PASSED!")
+				log.Println(year.Name() + "/" + f.Name() + ": comparing file modtime to foldername: " + fmt.Sprint(checked) + "/" + fmt.Sprint(len(files)) + " PASSED!")
+
 			} else {
-				fmt.Println(year.Name() + "/" + f.Name() + ": comparing file modtime to foldername: " + fmt.Sprint(checked) + "/" + fmt.Sprint(len(files)) + " NOT PASSED!")
+				log.Println(year.Name() + "/" + f.Name() + ": comparing file modtime to foldername: " + fmt.Sprint(checked) + "/" + fmt.Sprint(len(files)) + " NOT PASSED!")
+
 				for _, ef := range errornous_filenames {
-					fmt.Println("mismatch found: " + fmt.Sprint(ef))
+					log.Println("mismatch found: " + fmt.Sprint(ef))
 				}
 			}
 		}
 	}
+
+	if LOG {
+		defer logfile.Close()
+	}
+
 }
