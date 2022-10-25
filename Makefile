@@ -7,11 +7,11 @@ fmt:
 	go fmt .
 deps:
 	go mod tidy
-	go build -o ${BINARY_NAME} .
 clean: 
 	go clean
 
 build: fmt clean deps
+	go build -o ${BINARY_NAME} .
 
 run: fmt clean deps build
 	./${BINARY_NAME}
