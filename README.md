@@ -13,9 +13,8 @@ Program which detects:
 ```powershell
 git clone https://github.com/K0F/rundown_files_checker.git
 cd rundown_files_checker
-go mod tidy
-go build
-./rundown_files_checker -i /path/to/mounted/annova/rundowns/
+make build
+./openmedia_checker -i /path/to/mounted/Rundowns/
 ```
 
 You should have mounted "Annova" `cro.cz` smb in `/mnt/cro.cz/` or change the path in source file
