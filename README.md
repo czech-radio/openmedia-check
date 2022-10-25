@@ -11,10 +11,10 @@ Program which detects:
 ## Installation
 
 ```powershell
-git clone https://github.com/K0F/rundown_files_checker.git
-cd rundown_files_checker
+git clone https://github.com/czech-radio/openmedia-files-checker.git
+cd openmedia-files-checker
 make build
-./openmedia_checker -i /path/to/mounted/Rundowns/
+./openmedia-files-checker -i /path/to/mounted/Rundowns/
 ```
 
 You should have mounted "Annova" `cro.cz` smb in `/mnt/cro.cz/` or change the path in source file

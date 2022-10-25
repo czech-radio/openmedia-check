@@ -2,7 +2,7 @@
 
 .DEFAULT_GOAL := build`
 
-BINARY_NAME=openmedia_checker
+BINARY_NAME=openmedia-files-checker
 
 fmt:
 	go fmt .
@@ -14,7 +14,6 @@ build: clean deps fmt
 
 clean: 
 	go clean
-	rm ${BINARY_NAME}
 
 run: clean deps fmt build
 	./${BINARY_NAME}
