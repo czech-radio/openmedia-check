@@ -19,4 +19,5 @@ run: fmt clean deps build
 install: fmt clean deps build
 	cp ./${BINARY_NAME} /usr/local/bin/
 
-
+uninstall: clean
+	rm /usr/local/bin/${BINARY_NAME}
