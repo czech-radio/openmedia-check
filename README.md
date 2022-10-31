@@ -14,7 +14,7 @@ Program which detects:
 git clone https://github.com/czech-radio/openmedia-files-checker.git
 cd openmedia-files-checker
 make
-./openmedia-files-checker -i /path/to/mounted/Rundowns/2022/W01 [optional -o log.txt]
+./openmedia-files-checker -i "/path/to/mounted/Rundowns/2022/W01 /path/to/mounted/Rundowns/2022/W33" [optional -o log.txt]
 ```
 
 You should have mounted "Openmedia folder" `/xyz/cro.cz/Rundowns/2022/W01` or change the path to a directory begginning with `WXX`
