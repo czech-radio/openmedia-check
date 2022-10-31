@@ -1,14 +1,18 @@
 package main
 
 import (
+	"bufio"
 	"flag"
 	"fmt"
+	//	"github.com/beevik/etree"
 	"io/ioutil"
 	"log"
 	"os"
 	"strconv"
 	"strings"
-	"github.com/beevik/etree"
+
+	"golang.org/x/text/encoding/unicode"
+	"golang.org/x/text/transform"
 )
 
 const VERSION = "0.0.2"
@@ -58,20 +62,47 @@ type OM_Field struct {
 */
 
 func get_contact_count(filename string) int {
-        log.Println("Processing file "+filename)
-        doc := etree.NewDocument()
-        if err:= doc.ReadFromFile(filename); err != nil{
-		log.Fatal("Error reading file " + filename)
-	}
-        
-        var count int = 0
+	log.Println("Processing file " + filename)
 
-        for _, e := range doc.FindElements("./OM_OBJECT/*"){
-          log.Println(e.Tag)
-          count += 1
-        }
-        
-        log.Println("ok got " + fmt.Sprint(count))
+	//doc := etree.NewDocument()
+	//if err := doc.ReadFromFile(filename); err != nil {
+	//	log.Fatal("Error reading file " + filename + " " + err.Error())
+	//}
+
+	file, err := os.Open(filename)
+	if err != nil {
+		log.Fatal("Error reading file")
+	}
+	var count int = 0
+
+	scanner := bufio.NewScanner(transform.NewReader(file, unicode.UTF16(unicode.LittleEndian, unicode.UseBOM).NewDecoder()))
+	for scanner.Scan() {
+		var line string = fmt.Sprintln(scanner.Text())
+		if strings.Contains(line, "\"ContactContainerFieldID\" IsEmpty = \"no\"") {
+			//fmt.Println(fmt.Sprint(count) + " " + line)
+			count += 1
+		}
+	}
+
+	if err := file.Close(); err != nil {
+		log.Fatal(err)
+	}
+
+	// for _, e := range doc.FindElements("./OM_OBJECT/*") {
+	//for _, bytes := range doc.SelectElements("OM_OBJECT") {
+	/*
+		        for _, bytes := range doc.SelectElements("OM_OBJECT") {
+				log.Println(etree.Tag)
+				count += 1
+			}
+	*/
+
+	//log.Println("ok got " + fmt.Sprint(count))
+
+	if count == -1 {
+		log.Fatal("Error processing data")
+		return 0
+	}
 
 	return count
 }
@@ -96,7 +127,8 @@ func main() {
 
 			checked := 0
 			var errornous_filenames []string
-                        var contacts int = 0
+			var contacts int = 0
+			var contactsTotal int = 0
 
 			files, err := ioutil.ReadDir(ROOT_DIR + "/" + year.Name() + "/" + f.Name())
 			if err != nil {
@@ -122,7 +154,9 @@ func main() {
 						// log.Printf("file was modded on: %v and is in dir %v (%s)",week_no,dir_no,fn.Name())
 					}
 
-					contacts += get_contact_count(ROOT_DIR + "/" + year.Name() + "/" + f.Name() + "/" + fn.Name())
+					contacts = get_contact_count(ROOT_DIR + "/" + year.Name() + "/" + f.Name() + "/" + fn.Name())
+					contactsTotal += contacts
+					log.Println("No. of contacts collected: " + fmt.Sprint(contacts) + "/" + fmt.Sprint(contactsTotal))
 
 				} else {
 					errornous_filenames = append(errornous_filenames, "Not a xml file: "+f.Name()+"/"+fn.Name())
