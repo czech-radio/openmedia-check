@@ -4,7 +4,7 @@ Program bude sloužit ke kontrole správnosti zařazení OpenMedia XML souborů 
 
 ## Požadované funkce
 
-## Kontrola chybovosti
+### Kontrola chybovosti
 
 Program pro zadané adresáře zkontroluje, jestli v nich umístěné OpenMedia XML soubory, náleží do adresáře, ve kterém je právě umístěný. Soubor má v názvu uvedené datum tzn., že kontolujeme, jetli uvedené datum v názvu souboru odpovídá adresáři. Soubory řadíme podle let a týdnů např. 
 
@@ -15,7 +15,7 @@ Program pro zadané adresáře zkontroluje, jestli v nich umístěné OpenMedia 
   ...
 ```
 
-## Souhrnná statistika
+### Souhrnná statistika
 
 Program by měl podat informaci o množství souborů ve vyšetřovaných adresářích.
 
