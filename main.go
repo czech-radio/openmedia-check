@@ -64,7 +64,7 @@ type OM_Field struct {
 */
 
 func get_contact_count(filename string) int {
-	log.Println("Processing file " + filename)
+	// log.Println("Processing file " + filename)
 
 	//doc := etree.NewDocument()
 	//if err := doc.ReadFromFile(filename); err != nil {
@@ -73,7 +73,7 @@ func get_contact_count(filename string) int {
 
 	file, err := os.Open(filename)
 	if err != nil {
-		log.Fatal("Error reading file")
+		log.Fatal("Error reading file: " + filename)
 	}
 	var count int = 0
 
@@ -119,7 +119,7 @@ func main() {
 	foldername := filepath.Base(ROOT_DIR)
 	files, err := ioutil.ReadDir(ROOT_DIR)
 
-	//log.Println(ROOT_DIR)
+	log.Println("Processing folder: " + ROOT_DIR)
 	//log.Println(foldername)
 
 	if err != nil {
