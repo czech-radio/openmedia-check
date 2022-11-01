@@ -1,6 +1,9 @@
 #!/bin/bash 
 
 rm log.txt
-for i in `ls /mnt/cro.cz/Rundowns/2022`;
-do ./../openmedia-files-checker -i /mnt/cro.cz/Rundowns/2022/$i -o log.txt ;
+for year in `seq 2020 2022`; do
+
+for i in `ls /mnt/cro.cz/Rundowns/$year`;
+do ./../openmedia_files_checker -i /mnt/cro.cz/Rundowns/$year/$i -o log.txt ;
+done;
 done
