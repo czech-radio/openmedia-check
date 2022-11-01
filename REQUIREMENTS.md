@@ -12,10 +12,10 @@ V případě souborů představujích rundowny se export provádí hromadně jed
 
 ## Požadované funkce
 
-- [ ] Program má konzolové rozhraní. 
+- [x] Program má konzolové rozhraní. 
 - [ ] Program je dobře dokumentován a otestován.
-- [ ] Program může být použit jako součást Unix pipeline tzn. správně pracuje s `stdin/stdout/stderr`.
-- [ ] Vstupem jsou cesty k vyšetřovaným adresářům. 
+- [x] Program může být použit jako součást Unix pipeline tzn. správně pracuje s `stdin/stdout/stderr`.
+- [x] Vstupem jsou cesty k vyšetřovaným adresářům. 
 - [ ] Výstupem je **kontrola chybovosti** a **souhrnná statistika** o obsahu daných adresářů v podobě JSON objektu.
   - [ ] Chyby budou jasně definovány pomocí kódu (čísla/zkratky) a popisu. 
 
