@@ -37,7 +37,7 @@ var logfile os.File
 var FOLDERS string
 var MY_FOLDERS []string
 
-type JSONfromat struct {
+type JSONformat struct {
 	Date string ``
 }
 
