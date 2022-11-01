@@ -9,8 +9,9 @@ deps:
 	go mod tidy
 clean: 
 	go clean
+	rm ./${BINARY_NAME}
 
-build: clean deps
+build: deps
 	go build -o ${BINARY_NAME} .
 
 run: fmt clean deps build

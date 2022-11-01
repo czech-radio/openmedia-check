@@ -54,8 +54,8 @@ func init() {
 func main() {
 	for _, FOLDER := range MY_FOLDERS {
 
-		//check_files_moddtime_to_foldername(FOLDER)
 		check_files_filename_to_foldername(FOLDER)
+		check_files_moddtime_to_foldername(FOLDER)
 
 	} // end range FOLDERS
 
@@ -81,7 +81,7 @@ func parse_args() {
 
 	if OUTPUT != "" {
 		LOG = true
-		log.Println("Creating logfile: " + OUTPUT)
+		log.Println("Appending to logfile: " + OUTPUT)
 		logfile, err := os.OpenFile(OUTPUT, os.O_APPEND|os.O_CREATE|os.O_RDWR, 0666)
 		if err != nil {
 			log.Fatal("Cannot open output file for writing.")
@@ -97,17 +97,15 @@ func parse_args() {
 
 func filename_to_weekno(filename string) int {
 
-	parsed := strings.Split(strings.Split(filename, "-")[2], "_")
-	ending := parsed[len(parsed)-1]
+	ss := strings.Split(strings.Split(filename, "-")[2], "_")
+	
+        end := ss[len(ss)-1]
 
-	dateInt, _ := strconv.Atoi(ending[7:8])
-	month, _ := strconv.Atoi(ending[5:6])
-	year, _ := strconv.Atoi(ending[0:4])
+        dateInt, _ := strconv.Atoi(end[6:8])
+        month, _ := strconv.Atoi(end[4:6])
+        year, _ := strconv.Atoi(end[0:4])
 	then := time.Date(year, time.Month(month), dateInt, 0, 0, 0, 0, time.UTC)
-	week, _ := then.ISOWeek()
-
-	fmt.Println(week)
-	/// wrong result ???
+	_, week := then.ISOWeek()
 
 	return week
 }
@@ -143,16 +141,45 @@ func get_contact_count(filename string) int {
 
 func check_files_filename_to_foldername(FOLDER string) {
 
-	log.Println("Processing folder: " + FOLDER)
+	
+        foldername := filepath.Base(FOLDER)
 	files, err := ioutil.ReadDir(FOLDER)
 	if err != nil {
 		log.Fatal(err)
 	}
 
+
+	var errornous_filenames []string
+        var count int
+
+
 	for _, fn := range files {
-		log.Println(filename_to_weekno(fn.Name()))
+		week_no := filename_to_weekno(fn.Name())
+		dir_no, err := strconv.Atoi(strings.Split(fmt.Sprint(FOLDER), "W")[1])
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		if week_no == dir_no {
+                        count += 1
+
+		} else {
+			log.Fatal(fn.Name() + " Is in wrong folder")
+			errornous_filenames = append(errornous_filenames, "Wrong file placement: " + FOLDER+ "/" +fn.Name() )
+
+		}
 	}
-}
+
+
+        if count == len(files) {
+		log.Println(foldername + ": Comparing filename dates to foldername: " + fmt.Sprint(count) + "/" + fmt.Sprint(len(files)) + " PASSED!")
+	} else {
+		log.Println(foldername + ": Comparing filename dates to foldername: " + fmt.Sprint(count) + "/" + fmt.Sprint(len(files)) + " NOT PASSED!")
+		for _, ef := range errornous_filenames {
+			log.Println("mismatch found: " + fmt.Sprint(ef))
+		}
+	}
+      }
 
 func check_files_moddtime_to_foldername(FOLDER string) {
 
@@ -167,7 +194,6 @@ func check_files_moddtime_to_foldername(FOLDER string) {
 		log.Fatal(err)
 	}
 
-	log.Println("Processing folder: " + FOLDER)
 	//log.Println(foldername)
 
 	for _, fn := range files {
@@ -202,9 +228,9 @@ func check_files_moddtime_to_foldername(FOLDER string) {
 
 	} // end range files
 	if checked == len(files) {
-		log.Println(foldername + ": comparing file modtime to foldername: " + fmt.Sprint(checked) + "/" + fmt.Sprint(len(files)) + " PASSED!")
+		log.Println(foldername + ": Comparing file modtime to foldername: " + fmt.Sprint(checked) + "/" + fmt.Sprint(len(files)) + " PASSED!")
 	} else {
-		log.Println(foldername + ": comparing file modtime to foldername: " + fmt.Sprint(checked) + "/" + fmt.Sprint(len(files)) + " NOT PASSED!")
+		log.Println(foldername + ": Comparing file modtime to foldername: " + fmt.Sprint(checked) + "/" + fmt.Sprint(len(files)) + " NOT PASSED!")
 		for _, ef := range errornous_filenames {
 			log.Println("mismatch found: " + fmt.Sprint(ef))
 		}
