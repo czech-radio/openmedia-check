@@ -10,24 +10,26 @@ import (
 	//	"go.uber.org/zap"
 	"io/ioutil"
 	"log"
-
 	"os"
 	"strconv"
 	"strings"
+	"time"
 
 	"golang.org/x/text/encoding/unicode"
 	"golang.org/x/text/transform"
 )
 
-const VERSION = "0.0.2"
-
-var CONTACTS bool
-
-//// TODO ////////////////
+//// TODO  ////////////////////////////////////////////////////////
 // detect naming function
 // map of suggested moves
 // json logging
 //////////////////////////
+
+//// SCOPE ////////////////////////////////////////////////////////
+
+const VERSION = "0.0.2"
+
+var CONTACTS bool
 
 // var FOLDER string = ""
 var OUTPUT string = ""
@@ -41,27 +43,40 @@ type JSONformat struct {
 	Date string ``
 }
 
+//// INIT /////////////////////////////////////////////////////////
+
 func init() {
+	parse_args()
+}
+
+//// MAIN /////////////////////////////////////////////////////////
+
+func main() {
+	for _, FOLDER := range MY_FOLDERS {
+
+		//check_files_moddtime_to_foldername(FOLDER)
+		check_files_filename_to_foldername(FOLDER)
+
+	} // end range FOLDERS
+
+	if LOG {
+		defer logfile.Close()
+	}
+}
+
+//// FUNCTIONS ////////////////////////////////////////////////////
+
+func parse_args() {
+
 	flag.StringVar(&FOLDERS, "i", "", "Please specify the input path(s)")
 	flag.StringVar(&OUTPUT, "o", "", "Please specify the output file")
 	flag.Parse()
 
-	/*
-	  logger, err := zap.NewProduction()
-	  if err != nil {
-	    log.Fatal(err)
-	  }
-
-	  //log := zerolog.New(os.Stdout).With().Timestamp.Logger()
-	*/
-
-	log.Println(FOLDERS)
-
 	if FOLDERS == "" {
 		log.Fatal("Please specify the input folder(s) -i /path/to/2022/W33")
-		return
 	} else {
 		MY_FOLDERS = strings.Split(FOLDERS, " ")
+		log.Println(FOLDERS)
 	}
 
 	if OUTPUT != "" {
@@ -80,10 +95,21 @@ func init() {
 	}
 }
 
-func filename_to_weekno(filename string, foldername string) bool {
-	parsed := strings.Split(filename, "_")
-	log.Println(parsed)
-	return true
+func filename_to_weekno(filename string) int {
+
+	parsed := strings.Split(strings.Split(filename, "-")[2], "_")
+	ending := parsed[len(parsed)-1]
+
+	dateInt, _ := strconv.Atoi(ending[7:8])
+	month, _ := strconv.Atoi(ending[5:6])
+	year, _ := strconv.Atoi(ending[0:4])
+	then := time.Date(year, time.Month(month), dateInt, 0, 0, 0, 0, time.UTC)
+	week, _ := then.ISOWeek()
+
+	fmt.Println(week)
+	/// wrong result ???
+
+	return week
 }
 
 func get_contact_count(filename string) int {
@@ -115,66 +141,72 @@ func get_contact_count(filename string) int {
 	return count
 }
 
-func main() {
+func check_files_filename_to_foldername(FOLDER string) {
 
-	for _, FOLDER := range MY_FOLDERS {
-
-		checked := 0
-		var errornous_filenames []string
-		var contacts int = 0
-		var contactsTotal int = 0
-
-		foldername := filepath.Base(FOLDER)
-		files, err := ioutil.ReadDir(FOLDER)
-
-		log.Println("Processing folder: " + FOLDER)
-		//log.Println(foldername)
-
-		if err != nil {
-			log.Fatal(err)
-		} // files list
-
-		for _, fn := range files {
-			if strings.Contains(fn.Name(), ".xml") {
-
-				week_no, err := strconv.Atoi(strings.Split(fmt.Sprint(fn.ModTime().ISOWeek()), " ")[1])
-				if err != nil {
-					log.Fatal(err)
-				}
-
-				dir_no, err := strconv.Atoi(strings.Split(fmt.Sprint(foldername), "W")[1])
-				if err != nil {
-					log.Fatal(err)
-				}
-
-				if week_no == dir_no {
-					checked += 1
-				} else {
-					errornous_filenames = append(errornous_filenames, "Wrong modtime descriptor in file: "+foldername+"/"+fn.Name())
-					// log.Printf("file was modded on: %v and is in dir %v (%s)",week_no,dir_no,fn.Name())
-				}
-
-				if CONTACTS == true {
-					contacts = get_contact_count(filepath.Join(FOLDER, fn.Name()))
-					contactsTotal += contacts
-					log.Println("No. of contacts collected: " + fmt.Sprint(contacts) + "/" + fmt.Sprint(contactsTotal))
-				}
-
-			} else {
-				errornous_filenames = append(errornous_filenames, "Not a xml file: "+fn.Name())
-			}
-
-		} // end range files
-		if checked == len(files) {
-			log.Println(foldername + ": comparing file modtime to foldername: " + fmt.Sprint(checked) + "/" + fmt.Sprint(len(files)) + " PASSED!")
-		} else {
-			log.Println(foldername + ": comparing file modtime to foldername: " + fmt.Sprint(checked) + "/" + fmt.Sprint(len(files)) + " NOT PASSED!")
-			for _, ef := range errornous_filenames {
-				log.Println("mismatch found: " + fmt.Sprint(ef))
-			}
-		}
-	} // end range FOLDERS
-	if LOG {
-		defer logfile.Close()
+	log.Println("Processing folder: " + FOLDER)
+	files, err := ioutil.ReadDir(FOLDER)
+	if err != nil {
+		log.Fatal(err)
 	}
-} // end main
+
+	for _, fn := range files {
+		log.Println(filename_to_weekno(fn.Name()))
+	}
+}
+
+func check_files_moddtime_to_foldername(FOLDER string) {
+
+	checked := 0
+	var errornous_filenames []string
+	var contacts int = 0
+	var contactsTotal int = 0
+
+	foldername := filepath.Base(FOLDER)
+	files, err := ioutil.ReadDir(FOLDER)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	log.Println("Processing folder: " + FOLDER)
+	//log.Println(foldername)
+
+	for _, fn := range files {
+		if strings.Contains(fn.Name(), ".xml") {
+
+			week_no, err := strconv.Atoi(strings.Split(fmt.Sprint(fn.ModTime().ISOWeek()), " ")[1])
+			if err != nil {
+				log.Fatal(err)
+			}
+
+			dir_no, err := strconv.Atoi(strings.Split(fmt.Sprint(foldername), "W")[1])
+			if err != nil {
+				log.Fatal(err)
+			}
+
+			if week_no == dir_no {
+				checked += 1
+			} else {
+				errornous_filenames = append(errornous_filenames, "Wrong modtime descriptor in file: "+foldername+"/"+fn.Name())
+				// log.Printf("file was modded on: %v and is in dir %v (%s)",week_no,dir_no,fn.Name())
+			}
+
+			if CONTACTS == true {
+				contacts = get_contact_count(filepath.Join(FOLDER, fn.Name()))
+				contactsTotal += contacts
+				log.Println("No. of contacts collected: " + fmt.Sprint(contacts) + "/" + fmt.Sprint(contactsTotal))
+			}
+
+		} else {
+			errornous_filenames = append(errornous_filenames, "Not a xml file: "+fn.Name())
+		}
+
+	} // end range files
+	if checked == len(files) {
+		log.Println(foldername + ": comparing file modtime to foldername: " + fmt.Sprint(checked) + "/" + fmt.Sprint(len(files)) + " PASSED!")
+	} else {
+		log.Println(foldername + ": comparing file modtime to foldername: " + fmt.Sprint(checked) + "/" + fmt.Sprint(len(files)) + " NOT PASSED!")
+		for _, ef := range errornous_filenames {
+			log.Println("mismatch found: " + fmt.Sprint(ef))
+		}
+	}
+}
