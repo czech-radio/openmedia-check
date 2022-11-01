@@ -205,7 +205,6 @@ func check_files_moddtime_to_foldername(FOLDER string) error {
 
 	checked := 0
 	var errornous_filenames []string
-	var contacts int = 0
 	var contactsTotal int = 0
 
 	foldername := filepath.Base(FOLDER)
@@ -238,7 +237,10 @@ func check_files_moddtime_to_foldername(FOLDER string) error {
 			}
 
 			if CONTACTS == true {
-				contacts = get_contact_count(filepath.Join(FOLDER, fn.Name()))
+				contacts, err := get_contact_count(filepath.Join(FOLDER, fn.Name()))
+				if err != nil {
+					log.Fatal(err)
+				}
 				contactsTotal += contacts
 				log.Println("No. of contacts collected: " + fmt.Sprint(contacts) + "/" + fmt.Sprint(contactsTotal))
 			}
