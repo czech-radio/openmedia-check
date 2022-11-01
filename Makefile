@@ -10,7 +10,7 @@ deps:
 clean: 
 	go clean
 
-build: fmt clean deps
+build: clean deps
 	go build -o ${BINARY_NAME} .
 
 run: fmt clean deps build
