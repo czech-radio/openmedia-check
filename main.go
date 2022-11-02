@@ -5,6 +5,7 @@ import (
 	"errors"
 	"flag"
 	"fmt"
+	//"math"
 	"path/filepath"
 
 	//	"github.com/beevik/etree"
@@ -54,7 +55,8 @@ func init() {
 
 func main() {
 	for _, FOLDER := range MY_FOLDERS {
-
+                
+                log.Println("Starting test on folder: "+FOLDER)
 		err := check_files_filename_to_foldername(FOLDER)
 		if err != nil {
 			log.Fatal(err)
@@ -141,6 +143,7 @@ func delete_empty(s []string) []string {
 
 func filename_to_weekno(filename string) (int, error) {
 
+        
 	if filename == "" {
 		log.Fatal("No filename was supplied")
 		return 0, errors.New("The filename do not exist")
@@ -170,13 +173,25 @@ func filename_to_weekno(filename string) (int, error) {
 			   fmt.Printf("%02d %02d %04d\n",dateInt2,month2,year2)
 			   fmt.Printf("%v %v %v\n",ss[offset],ss[offset+1],ss[offset+2])
 			*/
-			fmt.Println("problematic file:" + filename + " marks: W" + fmt.Sprintf("%02d", week2) + " not W" + fmt.Sprintf("%02d", week))
+
+			offset = 0
+			dateInt3, _ := strconv.Atoi(ss[offset])
+			month3, _ := strconv.Atoi(ss[offset+1])
+			year3, _ := strconv.Atoi(ss[offset+2])
+			then3 := time.Date(year3, time.Month(month3), dateInt3, 0, 0, 0, 0, time.UTC)
+			_, week3 := then3.ISOWeek()
+
+			if week != week3{
+			  //fmt.Println("fixing:" + filename + " marks: W" + fmt.Sprintf("%02d", week3) + "  W" + fmt.Sprintf("%02d", week))
+			  log.Fatal("problematic file:" + filename + " marks: W" + fmt.Sprintf("%02d", week2) + " not W" + fmt.Sprintf("%02d", week))
+		          return -1, errors.New("File seems to have either wrong filename or is in wrong directory")
+                          
+                          //fmt.Println("mv "+filename+" ../W"+fmt.Sprintf("%02d",week3))
+                        }
 		}
 
-		return week, nil
-
+		        return week, nil
 	}
-
 }
 
 func get_contact_count(filename string) (int, error) {
