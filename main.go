@@ -13,6 +13,7 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
+	"regexp"
 	"strconv"
 	"strings"
 	"time"
@@ -55,8 +56,8 @@ func init() {
 
 func main() {
 	for _, FOLDER := range MY_FOLDERS {
-                
-                log.Println("Starting test on folder: "+FOLDER)
+
+		log.Println("Starting test on folder: " + FOLDER)
 		err := check_files_filename_to_foldername(FOLDER)
 		if err != nil {
 			log.Fatal(err)
@@ -143,7 +144,6 @@ func delete_empty(s []string) []string {
 
 func filename_to_weekno(filename string) (int, error) {
 
-        
 	if filename == "" {
 		log.Fatal("No filename was supplied")
 		return 0, errors.New("The filename do not exist")
@@ -181,20 +181,52 @@ func filename_to_weekno(filename string) (int, error) {
 			then3 := time.Date(year3, time.Month(month3), dateInt3, 0, 0, 0, 0, time.UTC)
 			_, week3 := then3.ISOWeek()
 
-			if week != week3{
-			  //fmt.Println("fixing:" + filename + " marks: W" + fmt.Sprintf("%02d", week3) + "  W" + fmt.Sprintf("%02d", week))
-			  log.Println("problematic file:" + filename + " marks: W" + fmt.Sprintf("%02d", week2) + " not W" + fmt.Sprintf("%02d", week))
-		          return -1, errors.New("File seems to have either wrong filename or is in wrong directory")
-                          
-                          //fmt.Println("mv "+filename+" ../W"+fmt.Sprintf("%02d",week3))
-                        }else{
-                          return week, nil
+			if week != week3 {
 
-                        }
-		}else{
-                        return week, nil
-                }
+				/*
+				   // tolerance suggest
+				   if(week-week3 < 1 || week3-week < 1){
+				     log.Println("suggesting cmd: mv " + filename + " " + fmt.Sprint(YEAR) + "/" + fmt.Sprintf("%02d",week3))
+				   }else if(week-week2 < 1 || week2-week < 1){
+				     log.Println("suggesting cmd: mv " + filename + " " + fmt.Sprint(YEAR) + "/" + fmt.Sprintf("%02d",week2))
+				   }
+				*/
+
+				return -1, errors.New("problematic file:" + filename + " marks either W" + fmt.Sprintf("%02d", week2) + " and W" + fmt.Sprintf("%02d", week))
+
+				//fmt.Println("mv "+filename+" ../W"+fmt.Sprintf("%02d",week3))
+			} else {
+				return week, nil
+
+			}
+		} else {
+			return week, nil
+		}
 	}
+}
+
+
+// not working WIP
+func get_inner_weekno(filename string) (int, error) {
+	file, err := os.Open(filename)
+	if err != nil {
+		log.Fatal("Error reading file: " + filename)
+	}
+
+	var result int
+
+	scanner := bufio.NewScanner(transform.NewReader(file, unicode.UTF16(unicode.LittleEndian, unicode.UseBOM).NewDecoder()))
+	for scanner.Scan() {
+		var line string = fmt.Sprintln(scanner.Text())
+		if strings.Contains(line, "<OM_DATETIME>") {
+			a := regexp.MustCompile(`<OM_DATETIME>*</OM_DATETIME>`)
+			split := a.Split(line, 1)
+			result, _ = strconv.Atoi(split[0])
+			log.Println(result)
+			break
+		}
+	}
+	return result, err
 }
 
 func get_contact_count(filename string) (int, error) {
@@ -252,21 +284,21 @@ func check_files_filename_to_foldername(FOLDER string) error {
 
 		if week_no == dir_no {
 			count += 1
-
 		} else {
-			log.Println(FOLDER + "/" + fn.Name() + "should be in W" + fmt.Sprintf("%02d", week_no))
+			//log.Println(FOLDER + "/" + fn.Name() + " filename_to_weekno failed: " fmt.Sprintf("%02d", week_no))
 			errornous_filenames = append(errornous_filenames, "Wrong file placement: "+FOLDER+"/"+fn.Name())
-
 		}
 	}
 
 	if count == len(files) {
-		log.Println(foldername + ": Comparing filename dates to foldername: " + fmt.Sprint(count) + "/" + fmt.Sprint(len(files)) + " PASSED!")
+		log.Println(foldername + ": Comparing filename dates to foldername: " + fmt.Sprint(count) + "/" + fmt.Sprint(len(files)) + " SUCCESS!")
 	} else {
-		log.Println(foldername + ": Comparing filename dates to foldername: " + fmt.Sprint(count) + "/" + fmt.Sprint(len(files)) + " NOT PASSED!")
-		for _, ef := range errornous_filenames {
-			log.Println("mismatch found: " + fmt.Sprint(ef))
-		}
+		log.Println(foldername + ": Comparing filename dates to foldername: " + fmt.Sprint(count) + "/" + fmt.Sprint(len(files)) + " FAILURE!")
+		/*
+		                for _, ef := range errornous_filenames {
+					log.Println("mismatch found: " + fmt.Sprint(ef))
+				}
+		*/
 	}
 
 	return nil
