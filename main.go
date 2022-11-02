@@ -21,7 +21,7 @@ import (
 )
 
 //// TODO  ////////////////////////////////////////////////////////
-// detect naming function
+// detect naming function, done
 // map of suggested moves
 // json logging
 //////////////////////////
@@ -60,10 +60,21 @@ func main() {
 			log.Fatal(err)
 		}
 
+		/* not crucial test, use only if filename is wrong
 		err = check_files_moddtime_to_foldername(FOLDER)
 		if err != nil {
 			log.Fatal(err)
 		}
+		*/
+
+		// optional checking contact count
+		if CONTACTS {
+			err := check_contact_count(FOLDER)
+			if err != nil {
+				log.Fatal(err)
+			}
+		}
+
 	} // end range FOLDERS
 
 	if LOG {
@@ -77,6 +88,8 @@ func parse_args() {
 
 	flag.StringVar(&FOLDERS, "i", "", "Please specify the input path(s)")
 	flag.StringVar(&OUTPUT, "o", "", "Please specify the output file")
+	flag.Bool("c", false, "Count contacts")
+	//flag.CommandLine.SetOutput(io.Discard)
 	flag.Parse()
 
 	if FOLDERS == "" {
@@ -96,10 +109,34 @@ func parse_args() {
 		log.SetOutput(logfile)
 	}
 
+	if isFlagPassed("c") {
+		CONTACTS = true
+	}
+
 	flag.Usage = func() {
 		fmt.Println("Usage of program:")
-		fmt.Println("./openmedia-files-checker -i /path/to/openmedia/Rundown (full path(s) to Rundowns folder(s)) [-o logfile.txt]")
+		fmt.Println("./openmedia_files_checker -i \"/path/to/Rundown1 /path/to/Rundown2\" (full path(s) to Rundowns folder(s)) [-o logfile.txt] [-c (do contact counts)]")
 	}
+}
+
+func isFlagPassed(name string) bool {
+	found := false
+	flag.Visit(func(f *flag.Flag) {
+		if f.Name == name {
+			found = true
+		}
+	})
+	return found
+}
+
+func delete_empty(s []string) []string {
+	var r []string
+	for _, str := range s {
+		if str != "" {
+			r = append(r, str)
+		}
+	}
+	return r
 }
 
 func filename_to_weekno(filename string) (int, error) {
@@ -111,7 +148,7 @@ func filename_to_weekno(filename string) (int, error) {
 
 		split1 := strings.Split(filename, "-")
 		ss := strings.Split(split1[len(split1)-1], "_")
-
+		ss = delete_empty(ss)
 		end := ss[len(ss)-1]
 
 		dateInt, _ := strconv.Atoi(end[6:8])
@@ -119,6 +156,22 @@ func filename_to_weekno(filename string) (int, error) {
 		year, _ := strconv.Atoi(end[0:4])
 		then := time.Date(year, time.Month(month), dateInt, 0, 0, 0, 0, time.UTC)
 		_, week := then.ISOWeek()
+
+		offset := 1
+		dateInt2, _ := strconv.Atoi(ss[offset])
+		month2, _ := strconv.Atoi(ss[offset+1])
+		year2, _ := strconv.Atoi(ss[offset+2])
+		then2 := time.Date(year2, time.Month(month2), dateInt2, 0, 0, 0, 0, time.UTC)
+		_, week2 := then2.ISOWeek()
+
+		if week != week2 {
+			/*
+			   fmt.Printf("%02d %02d %04d\n",dateInt,month,year)
+			   fmt.Printf("%02d %02d %04d\n",dateInt2,month2,year2)
+			   fmt.Printf("%v %v %v\n",ss[offset],ss[offset+1],ss[offset+2])
+			*/
+			fmt.Println("problematic file:" + filename + " marks: W" + fmt.Sprintf("%02d", week2) + " not W" + fmt.Sprintf("%02d", week))
+		}
 
 		return week, nil
 
@@ -183,7 +236,7 @@ func check_files_filename_to_foldername(FOLDER string) error {
 			count += 1
 
 		} else {
-			log.Fatal(fn.Name() + " Is in wrong folder")
+			log.Fatal(FOLDER + "/" + fn.Name() + "should be in W" + fmt.Sprintf("%02d", week_no))
 			errornous_filenames = append(errornous_filenames, "Wrong file placement: "+FOLDER+"/"+fn.Name())
 
 		}
@@ -201,11 +254,41 @@ func check_files_filename_to_foldername(FOLDER string) error {
 	return nil
 }
 
+func check_contact_count(FOLDER string) error {
+
+	contactsTotal := 0
+	checked := 0
+
+	var errornous_filenames []string
+
+	files, err := ioutil.ReadDir(FOLDER)
+	if err != nil {
+		log.Fatal(err)
+		return errors.New("Cannot read directory")
+	}
+
+	log.Println("Checking contacts ...")
+
+	for _, fn := range files {
+		if strings.Contains(fn.Name(), ".xml") {
+			contacts, err := get_contact_count(filepath.Join(FOLDER, fn.Name()))
+			if err != nil {
+				log.Fatal(err)
+			}
+			contactsTotal += contacts
+			checked++
+		} else {
+			errornous_filenames = append(errornous_filenames, "Not a xml file: "+fn.Name())
+		}
+	}
+	log.Println("No. of contacts collected: " + fmt.Sprint(contactsTotal) + " PASSED!")
+	return nil
+}
+
 func check_files_moddtime_to_foldername(FOLDER string) error {
 
 	checked := 0
 	var errornous_filenames []string
-	var contactsTotal int = 0
 
 	foldername := filepath.Base(FOLDER)
 	files, err := ioutil.ReadDir(FOLDER)
@@ -236,13 +319,7 @@ func check_files_moddtime_to_foldername(FOLDER string) error {
 				// log.Printf("file was modded on: %v and is in dir %v (%s)",week_no,dir_no,fn.Name())
 			}
 
-			if CONTACTS == true {
-				contacts, err := get_contact_count(filepath.Join(FOLDER, fn.Name()))
-				if err != nil {
-					log.Fatal(err)
-				}
-				contactsTotal += contacts
-				log.Println("No. of contacts collected: " + fmt.Sprint(contacts) + "/" + fmt.Sprint(contactsTotal))
+			if CONTACTS {
 			}
 
 		} else {
@@ -250,13 +327,18 @@ func check_files_moddtime_to_foldername(FOLDER string) error {
 		}
 
 	} // end range files
+
 	if checked == len(files) {
 		log.Println(foldername + ": Comparing file modtime to foldername: " + fmt.Sprint(checked) + "/" + fmt.Sprint(len(files)) + "   PASSED!")
 	} else {
 		log.Println(foldername + ": Comparing file modtime to foldername: " + fmt.Sprint(checked) + "/" + fmt.Sprint(len(files)) + "   NOT PASSED!")
-		for _, ef := range errornous_filenames {
-			log.Println("mismatch found: " + fmt.Sprint(ef))
-		}
+		/*
+			                move map needed here
+			                for _, ef := range errornous_filenames {
+						log.Println("mismatch found: " + fmt.Sprint(ef))
+					}
+
+		*/
 	}
 
 	return nil
