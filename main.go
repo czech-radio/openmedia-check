@@ -183,14 +183,17 @@ func filename_to_weekno(filename string) (int, error) {
 
 			if week != week3{
 			  //fmt.Println("fixing:" + filename + " marks: W" + fmt.Sprintf("%02d", week3) + "  W" + fmt.Sprintf("%02d", week))
-			  log.Fatal("problematic file:" + filename + " marks: W" + fmt.Sprintf("%02d", week2) + " not W" + fmt.Sprintf("%02d", week))
+			  log.Println("problematic file:" + filename + " marks: W" + fmt.Sprintf("%02d", week2) + " not W" + fmt.Sprintf("%02d", week))
 		          return -1, errors.New("File seems to have either wrong filename or is in wrong directory")
                           
                           //fmt.Println("mv "+filename+" ../W"+fmt.Sprintf("%02d",week3))
-                        }
-		}
+                        }else{
+                          return week, nil
 
-		        return week, nil
+                        }
+		}else{
+                        return week, nil
+                }
 	}
 }
 
@@ -239,19 +242,19 @@ func check_files_filename_to_foldername(FOLDER string) error {
 	for _, fn := range files {
 		week_no, err := filename_to_weekno(fn.Name())
 		if err != nil {
-			log.Fatal(err)
+			log.Println(err)
 		}
 
 		dir_no, err := strconv.Atoi(strings.Split(fmt.Sprint(FOLDER), "W")[1])
 		if err != nil {
-			log.Fatal(err)
+			log.Println(err)
 		}
 
 		if week_no == dir_no {
 			count += 1
 
 		} else {
-			log.Fatal(FOLDER + "/" + fn.Name() + "should be in W" + fmt.Sprintf("%02d", week_no))
+			log.Println(FOLDER + "/" + fn.Name() + "should be in W" + fmt.Sprintf("%02d", week_no))
 			errornous_filenames = append(errornous_filenames, "Wrong file placement: "+FOLDER+"/"+fn.Name())
 
 		}
