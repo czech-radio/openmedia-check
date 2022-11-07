@@ -232,7 +232,7 @@ func get_inner_weekno(filename string) (int, int, error) {
 	for scanner.Scan() {
 		var line string = fmt.Sprintln(scanner.Text())
 		var offset = strings.Index(line, "<OM_DATETIME>")
-		if offset != -1 && strings.Contains(line, "IsEmpty = \"no\"") && strings.Contains(line, "\"Čas začátku\" IsEmpty = \"no\"") {
+		if offset != -1 && strings.Contains(line, "\"Čas začátku\" IsEmpty = \"no\"") {
 
 			offset2 := 13
 			dateInt, _ := strconv.Atoi(line[offset+offset2+6 : offset+offset2+8])
@@ -399,6 +399,7 @@ func check_contact_count(FOLDER string) error {
 	return nil
 }
 
+// unused
 func check_files_moddtime_to_foldername(FOLDER string) error {
 
 	checked := 0
