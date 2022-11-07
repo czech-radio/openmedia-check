@@ -13,7 +13,8 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
-	"regexp"
+	//"regexp"
+
 	"strconv"
 	"strings"
 	"time"
@@ -154,12 +155,14 @@ func filename_to_weekno(filename string) (int, error) {
 		ss = delete_empty(ss)
 		end := ss[len(ss)-1]
 
+		// parse end DATA
 		dateInt, _ := strconv.Atoi(end[6:8])
 		month, _ := strconv.Atoi(end[4:6])
 		year, _ := strconv.Atoi(end[0:4])
 		then := time.Date(year, time.Month(month), dateInt, 0, 0, 0, 0, time.UTC)
 		_, week := then.ISOWeek()
 
+		// parse beginning DATE
 		offset := 1
 		dateInt2, _ := strconv.Atoi(ss[offset])
 		month2, _ := strconv.Atoi(ss[offset+1])
@@ -174,6 +177,7 @@ func filename_to_weekno(filename string) (int, error) {
 			   fmt.Printf("%v %v %v\n",ss[offset],ss[offset+1],ss[offset+2])
 			*/
 
+			// try to fix offset
 			offset = 0
 			dateInt3, _ := strconv.Atoi(ss[offset])
 			month3, _ := strconv.Atoi(ss[offset+1])
@@ -197,7 +201,6 @@ func filename_to_weekno(filename string) (int, error) {
 				//fmt.Println("mv "+filename+" ../W"+fmt.Sprintf("%02d",week3))
 			} else {
 				return week, nil
-
 			}
 		} else {
 			return week, nil
@@ -205,28 +208,52 @@ func filename_to_weekno(filename string) (int, error) {
 	}
 }
 
-
-// not working WIP
-func get_inner_weekno(filename string) (int, error) {
+func get_inner_weekno(filename string) (int, int, error) {
 	file, err := os.Open(filename)
 	if err != nil {
 		log.Fatal("Error reading file: " + filename)
 	}
 
-	var result int
+	var Year int = -1
+	var week int = -1
 
+	/*
+	   var counter int = 0
+	   var first int = 0
+	   var last int = 0
+	*/
 	scanner := bufio.NewScanner(transform.NewReader(file, unicode.UTF16(unicode.LittleEndian, unicode.UseBOM).NewDecoder()))
 	for scanner.Scan() {
 		var line string = fmt.Sprintln(scanner.Text())
-		if strings.Contains(line, "<OM_DATETIME>") {
-			a := regexp.MustCompile(`<OM_DATETIME>*</OM_DATETIME>`)
-			split := a.Split(line, 1)
-			result, _ = strconv.Atoi(split[0])
-			log.Println(result)
+		var offset = strings.Index(line, "<OM_DATETIME>")
+		if offset != -1 && strings.Contains(line, "IsEmpty = \"no\"") && strings.Contains(line, "\"Čas začátku\" IsEmpty = \"no\"") {
+
+			offset2 := 13
+			dateInt, _ := strconv.Atoi(line[offset+offset2+6 : offset+offset2+8])
+			month, _ := strconv.Atoi(line[offset+offset2+4 : offset+offset2+6])
+			year, _ := strconv.Atoi(line[offset+offset2 : offset+offset2+4])
+			then := time.Date(year, time.Month(month), dateInt, 0, 0, 0, 0, time.UTC)
+			Year, week = then.ISOWeek()
+
+			/*
+			   if counter == 0{
+			     first = week
+			   }
+			   last = week
+
+			   counter++
+			*/
+
+			// get first only?
 			break
 		}
 	}
-	return result, err
+	err = file.Close()
+	//                    log.Printf("first:W%02d, last: W%02d\n",first,last)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return Year, week, err
 }
 
 func get_contact_count(filename string) (int, error) {
@@ -272,7 +299,9 @@ func check_files_filename_to_foldername(FOLDER string) error {
 	var count int
 
 	for _, fn := range files {
-		week_no, err := filename_to_weekno(fn.Name())
+		// week_no, err := filename_to_weekno(fn.Name())
+		year, week_no, err := get_inner_weekno(FOLDER + "/" + fn.Name())
+
 		if err != nil {
 			log.Println(err)
 		}
@@ -286,7 +315,7 @@ func check_files_filename_to_foldername(FOLDER string) error {
 			count += 1
 		} else {
 			//log.Println(FOLDER + "/" + fn.Name() + " filename_to_weekno failed: " fmt.Sprintf("%02d", week_no))
-			errornous_filenames = append(errornous_filenames, "Wrong file placement: "+FOLDER+"/"+fn.Name())
+			errornous_filenames = append(errornous_filenames, "Wrong file placement: "+FOLDER+"/"+fn.Name()+" should be in "+fmt.Sprint(year)+"/"+fmt.Sprint(week_no))
 		}
 	}
 
@@ -294,11 +323,9 @@ func check_files_filename_to_foldername(FOLDER string) error {
 		log.Println(foldername + ": Comparing filename dates to foldername: " + fmt.Sprint(count) + "/" + fmt.Sprint(len(files)) + " SUCCESS!")
 	} else {
 		log.Println(foldername + ": Comparing filename dates to foldername: " + fmt.Sprint(count) + "/" + fmt.Sprint(len(files)) + " FAILURE!")
-		/*
-		                for _, ef := range errornous_filenames {
-					log.Println("mismatch found: " + fmt.Sprint(ef))
-				}
-		*/
+		for _, ef := range errornous_filenames {
+			log.Println("mismatch found: " + fmt.Sprint(ef))
+		}
 	}
 
 	return nil
@@ -331,7 +358,7 @@ func check_contact_count(FOLDER string) error {
 			errornous_filenames = append(errornous_filenames, "Not a xml file: "+fn.Name())
 		}
 	}
-	log.Println("No. of contacts collected: " + fmt.Sprint(contactsTotal) + " PASSED!")
+	log.Println("No. of contacts collected: " + fmt.Sprint(contactsTotal) + " SUCCESS!")
 	return nil
 }
 
@@ -379,9 +406,9 @@ func check_files_moddtime_to_foldername(FOLDER string) error {
 	} // end range files
 
 	if checked == len(files) {
-		log.Println(foldername + ": Comparing file modtime to foldername: " + fmt.Sprint(checked) + "/" + fmt.Sprint(len(files)) + "   PASSED!")
+		log.Println(foldername + ": Comparing file modtime to foldername: " + fmt.Sprint(checked) + "/" + fmt.Sprint(len(files)) + "   SUCCESS!")
 	} else {
-		log.Println(foldername + ": Comparing file modtime to foldername: " + fmt.Sprint(checked) + "/" + fmt.Sprint(len(files)) + "   NOT PASSED!")
+		log.Println(foldername + ": Comparing file modtime to foldername: " + fmt.Sprint(checked) + "/" + fmt.Sprint(len(files)) + "   FAILURE!")
 		/*
 			                move map needed here
 			                for _, ef := range errornous_filenames {
