@@ -292,6 +292,28 @@ func get_contact_count(filename string) (int, error) {
 	return count, err
 }
 
+func folder_name_to_new_one(folder string, year int, month int) string {
+	//split := strings.Split(folder,fmt.Sprint(filepath.Separator))
+	split := strings.Split(folder,"/")
+
+        /*
+        if(len(split) < 2) {
+          
+          err := errors.New("Invalid path, path should end with YYYY/WMM")
+        }*/
+
+	split[len(split)-1] = fmt.Sprintf("W%02d", month)
+	split[len(split)-2] = fmt.Sprintf("%04d", year)
+
+        var newpath string
+        for _, i := range split {
+          newpath = filepath.Join(newpath,i)
+        }
+
+	return newpath
+
+}
+
 func check_files_filename_to_foldername(FOLDER string) error {
 
 	foldername := filepath.Base(FOLDER)
@@ -305,23 +327,28 @@ func check_files_filename_to_foldername(FOLDER string) error {
 	var count int
 
 	for _, fn := range files {
-		// week_no, err := filename_to_weekno(fn.Name())
-		year, week_no, err := get_inner_weekno(FOLDER + "/" + fn.Name())
+		if strings.Contains(fn.Name(), ".xml") {
+			year, week_no, err := get_inner_weekno(filepath.Join(FOLDER, fn.Name()))
 
-		if err != nil {
-			log.Println(err)
-		}
+			if err != nil {
+				log.Println(err)
+			}
 
-		dir_no, err := strconv.Atoi(strings.Split(fmt.Sprint(FOLDER), "W")[1])
-		if err != nil {
-			log.Println(err)
-		}
+			dir_no, err := strconv.Atoi(strings.Split(fmt.Sprint(FOLDER), "W")[1])
+			if err != nil {
+				log.Println(err)
+			}
 
-		if week_no == dir_no {
-			count += 1
+			if week_no == dir_no {
+				count += 1
+			} else {
+				//log.Println(FOLDER + "/" + fn.Name() + " filename_to_weekno failed: " fmt.Sprintf("%02d", week_no))
+
+				errornous_filenames = append(errornous_filenames, "mv "+filepath.Join(FOLDER,fn.Name())+" "+folder_name_to_new_one(FOLDER, year, week_no))
+			}
 		} else {
-			//log.Println(FOLDER + "/" + fn.Name() + " filename_to_weekno failed: " fmt.Sprintf("%02d", week_no))
-			errornous_filenames = append(errornous_filenames, "mv "+FOLDER+"/"+fn.Name()+" ../"+fmt.Sprint(year)+"/"+fmt.Sprintf("W%02d", week_no))
+			errornous_filenames = append(errornous_filenames, "rm "+filepath.Join(FOLDER,fn.Name()) )
+
 		}
 	}
 
