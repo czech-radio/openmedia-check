@@ -294,21 +294,21 @@ func get_contact_count(filename string) (int, error) {
 
 func folder_name_to_new_one(folder string, year int, month int) string {
 	//split := strings.Split(folder,fmt.Sprint(filepath.Separator))
-	split := strings.Split(folder,"/")
+	split := strings.Split(folder, "/")
 
-        /*
-        if(len(split) < 2) {
-          
-          err := errors.New("Invalid path, path should end with YYYY/WMM")
-        }*/
+	/*
+	   if(len(split) < 2) {
+
+	     err := errors.New("Invalid path, path should end with YYYY/WMM")
+	   }*/
 
 	split[len(split)-1] = fmt.Sprintf("W%02d", month)
 	split[len(split)-2] = fmt.Sprintf("%04d", year)
 
-        var newpath string
-        for _, i := range split {
-          newpath = filepath.Join(newpath,i)
-        }
+	var newpath string
+	for _, i := range split {
+		newpath = filepath.Join(newpath, i)
+	}
 
 	return newpath
 
@@ -344,10 +344,10 @@ func check_files_filename_to_foldername(FOLDER string) error {
 			} else {
 				//log.Println(FOLDER + "/" + fn.Name() + " filename_to_weekno failed: " fmt.Sprintf("%02d", week_no))
 
-				errornous_filenames = append(errornous_filenames, "mv "+filepath.Join(FOLDER,fn.Name())+" "+folder_name_to_new_one(FOLDER, year, week_no))
+				errornous_filenames = append(errornous_filenames, "mv "+filepath.Join(FOLDER, fn.Name())+" "+folder_name_to_new_one(FOLDER, year, week_no))
 			}
 		} else {
-			errornous_filenames = append(errornous_filenames, "rm "+filepath.Join(FOLDER,fn.Name()) )
+			errornous_filenames = append(errornous_filenames, "rm "+filepath.Join(FOLDER, fn.Name()))
 
 		}
 	}
