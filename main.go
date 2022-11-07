@@ -305,7 +305,7 @@ func folder_name_to_new_one(folder string, year int, month int) string {
 	split[len(split)-1] = fmt.Sprintf("W%02d", month)
 	split[len(split)-2] = fmt.Sprintf("%04d", year)
 
-	var newpath string
+	var newpath string = "/"
 	for _, i := range split {
 		newpath = filepath.Join(newpath, i)
 	}
