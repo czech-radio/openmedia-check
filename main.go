@@ -13,7 +13,7 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
-	"os/exec"
+	//"os/exec"
 	//"regexp"
 
 	"strconv"
@@ -306,7 +306,13 @@ func folder_name_to_new_one(folder string, year int, month int) string {
 	split[len(split)-1] = fmt.Sprintf("W%02d", month)
 	split[len(split)-2] = fmt.Sprintf("%04d", year)
 
-	var newpath string = "/"
+	var newpath string
+	if folder[0:1] == "/" {
+		newpath = "/"
+	} else {
+		newpath = ""
+	}
+
 	for _, i := range split {
 		newpath = filepath.Join(newpath, i)
 	}
@@ -345,7 +351,7 @@ func check_files_filename_to_foldername(FOLDER string) error {
 			} else {
 				//log.Println(FOLDER + "/" + fn.Name() + " filename_to_weekno failed: " fmt.Sprintf("%02d", week_no))
 
-				errornous_filenames = append(errornous_filenames, "mv "+filepath.Join(FOLDER, fn.Name())+" "+folder_name_to_new_one(FOLDER, year, week_no))
+				errornous_filenames = append(errornous_filenames, "mv "+filepath.Join(FOLDER, fn.Name())+" "+folder_name_to_new_one(FOLDER, year, week_no)+"/"+fn.Name())
 			}
 		} else {
 			errornous_filenames = append(errornous_filenames, "rm "+filepath.Join(FOLDER, fn.Name()))
@@ -365,17 +371,19 @@ func check_files_filename_to_foldername(FOLDER string) error {
 
 				log.Println("DRY_RUN off: " + fmt.Sprint(ef))
 
-				var arguments string = ""
-				for i, arg := range command {
-					if i != 0 {
-						arguments = arguments + " " + arg
-					}
-				}
-				cmd := exec.Command(command[0], command[1])
+				// move files
+				if command[0] == "mv" {
 
-				err := cmd.Run()
-				if err != nil {
-					log.Println(err)
+					err := os.Rename(command[1], command[2])
+					if err != nil {
+						log.Println(err)
+					}
+					//remove files
+				} else if command[0] == "rm" {
+					err := os.Remove(command[1])
+					if err != nil {
+						log.Println(err)
+					}
 				}
 			}
 		}
