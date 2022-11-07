@@ -38,6 +38,7 @@ var CONTACTS bool
 // var FOLDER string = ""
 var OUTPUT string = ""
 var LOG bool = false
+var DRY_RUN bool = true
 var logfile os.File
 
 var FOLDERS string
@@ -93,6 +94,7 @@ func parse_args() {
 	flag.StringVar(&FOLDERS, "i", "", "Please specify the input path(s)")
 	flag.StringVar(&OUTPUT, "o", "", "Please specify the output file")
 	flag.Bool("c", false, "Count contacts")
+	flag.Bool("w", true, "Write changes")
 	//flag.CommandLine.SetOutput(io.Discard)
 	flag.Parse()
 
@@ -115,6 +117,10 @@ func parse_args() {
 
 	if isFlagPassed("c") {
 		CONTACTS = true
+	}
+
+	if isFlagPassed("w") {
+		DRY_RUN = false
 	}
 
 	flag.Usage = func() {
@@ -315,16 +321,20 @@ func check_files_filename_to_foldername(FOLDER string) error {
 			count += 1
 		} else {
 			//log.Println(FOLDER + "/" + fn.Name() + " filename_to_weekno failed: " fmt.Sprintf("%02d", week_no))
-			errornous_filenames = append(errornous_filenames, "Wrong file placement: "+FOLDER+"/"+fn.Name()+" should be in "+fmt.Sprint(year)+"/"+fmt.Sprint(week_no))
+			errornous_filenames = append(errornous_filenames, "mv "+FOLDER+"/"+fn.Name()+" ../"+fmt.Sprint(year)+"/"+fmt.Sprintf("W%02d", week_no))
 		}
 	}
 
 	if count == len(files) {
-		log.Println(foldername + ": Comparing filename dates to foldername: " + fmt.Sprint(count) + "/" + fmt.Sprint(len(files)) + " SUCCESS!")
+		log.Println(foldername + ": Comparing inner date to foldername: " + fmt.Sprint(count) + "/" + fmt.Sprint(len(files)) + " SUCCESS!")
 	} else {
-		log.Println(foldername + ": Comparing filename dates to foldername: " + fmt.Sprint(count) + "/" + fmt.Sprint(len(files)) + " FAILURE!")
+		log.Println(foldername + ": Comparing inner date to foldername: " + fmt.Sprint(count) + "/" + fmt.Sprint(len(files)) + " FAILURE!")
 		for _, ef := range errornous_filenames {
-			log.Println("mismatch found: " + fmt.Sprint(ef))
+			if DRY_RUN {
+				log.Println("DRY_RUN on: " + fmt.Sprint(ef))
+			} else {
+				// move to folder
+			}
 		}
 	}
 
