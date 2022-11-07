@@ -13,6 +13,7 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
+	"os/exec"
 	//"regexp"
 
 	"strconv"
@@ -360,7 +361,22 @@ func check_files_filename_to_foldername(FOLDER string) error {
 			if DRY_RUN {
 				log.Println("DRY_RUN on: " + fmt.Sprint(ef))
 			} else {
-				// move to folder
+				command := strings.Split(fmt.Sprint(ef), " ")
+
+				log.Println("DRY_RUN off: " + fmt.Sprint(ef))
+
+				var arguments string = ""
+				for i, arg := range command {
+					if i != 0 {
+						arguments = arguments + " " + arg
+					}
+				}
+				cmd := exec.Command(command[0], command[1])
+
+				err := cmd.Run()
+				if err != nil {
+					log.Println(err)
+				}
 			}
 		}
 	}
