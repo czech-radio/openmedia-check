@@ -4,21 +4,30 @@
 
 ## Features
 
-- bad modtimes in files whitin rundown repository (disk cro.cz)
-- (todo) number of contacts per week
-- (todo) match contacts to given stations
+- Report wrongly placed files.
+- Report number of contacts per week.
+- Match contacts to the given stations.
 
 ## Installation
 
-```bash
-git clone https://github.com/czech-radio/openmedia-files-checker.git
-cd openmedia-files-checker
-go mod tidy
-go build
-./openmedia-files-checker -i "/path/to/mounted/Rundowns/2022/W01 /path/to/mounted/Rundowns/2022/W33" [optional -o log.txt] [optional -w write changes]
-```
+- Step 1
+  ```bash
+  git clone https://github.com/czech-radio/openmedia-files-checker.git
+  ```
+- Step 2
+  ```bash
+  cd openmedia-files-checker
+  ```
+- Step 3
+  ```bash
+  go mod tidy
+  ```
+- Step 4
+  ```bash
+  go build
+  ```
 
-You should have mounted "Openmedia folder" `/xyz/cro.cz/Rundowns/2022/W01` or change the path to a directory begginning with `WXX`
+You should have mounted "Openmedia folder" `/xyz/cro.cz/Rundowns/2022/W01` or change the path to a directory begginning with `WXX`.
 
 When it runs well, you should see something like this on the output:
 
