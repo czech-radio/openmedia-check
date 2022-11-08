@@ -5,16 +5,11 @@ import (
 	"errors"
 	"flag"
 	"fmt"
-	//"math"
 	"path/filepath"
 
-	//	"github.com/beevik/etree"
-	//	"go.uber.org/zap"
 	"io/ioutil"
 	"log"
 	"os"
-	//"os/exec"
-	//"regexp"
 
 	"strconv"
 	"strings"
@@ -58,6 +53,13 @@ func init() {
 //// MAIN /////////////////////////////////////////////////////////
 
 func main() {
+
+	logger := new(JSONLogger)
+	logger.Init("log.json")
+	logger.Println("info", "This is test message")
+	logger.Println("error", "This is test error")
+	logger.list()
+
 	for _, FOLDER := range MY_FOLDERS {
 
 		log.Println("Starting test on folder: " + FOLDER)
@@ -126,7 +128,7 @@ func parse_args() {
 
 	flag.Usage = func() {
 		fmt.Println("Usage of program:")
-		fmt.Println("./openmedia_files_checker -i \"/path/to/Rundown1 /path/to/Rundown2\" (full path(s) to Rundowns folder(s)) [-o logfile.txt] [-c (do contact counts)]")
+		fmt.Println("./openmedia_files_checker -i \"/path/to/Rundown1 /path/to/Rundown2\" (full path(s) to Rundowns folder(s)) [-o logfile.txt] [-c (do contact counts)] [-w dry run off, doing changes to filesystem]")
 	}
 }
 
