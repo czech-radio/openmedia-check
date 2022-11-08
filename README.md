@@ -27,7 +27,14 @@
   go build
   ```
 
-You should have mounted "Openmedia folder" `/xyz/cro.cz/Rundowns/2022/W01` or change the path to a directory begginning with `WXX`.
+## Usage
+
+The "OpenMedia export folder must be mounted (accessible) `/xyz/cro.cz/Rundowns/2022/W01`.
+You can change the path to the directory beginning with `WXX`.
+
+```bash
+./openmedia-files-checker -i "/path/to/mounted/Rundowns/2022/W01 /path/to/mounted/Rundowns/2022/W33" [optional -o log.txt] [optional -w write changes]
+```
 
 When it runs well, you should see something like this on the output:
 
