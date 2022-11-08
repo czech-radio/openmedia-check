@@ -8,7 +8,6 @@ import (
 	"path/filepath"
 
 	"io/ioutil"
-	"log"
 	"os"
 
 	"strconv"
@@ -22,7 +21,7 @@ import (
 //// TODO  ////////////////////////////////////////////////////////
 // detect naming function, done
 // map of suggested moves
-// json logging
+// json logger.ing
 //////////////////////////
 
 //// SCOPE ////////////////////////////////////////////////////////
@@ -30,6 +29,7 @@ import (
 const VERSION = "0.0.2"
 
 var CONTACTS bool
+var logger JSONLogger
 
 // var FOLDER string = ""
 var OUTPUT string = ""
@@ -47,6 +47,7 @@ type JSONformat struct {
 //// INIT /////////////////////////////////////////////////////////
 
 func init() {
+	logger = JSONLogger{Filename: "test.json"}
 	parse_args()
 }
 
@@ -54,24 +55,18 @@ func init() {
 
 func main() {
 
-	logger := new(JSONLogger)
-	logger.Init("log.json")
-	logger.Println("info", "This is test message")
-	logger.Println("error", "This is test error")
-	logger.list()
-
 	for _, FOLDER := range MY_FOLDERS {
 
-		log.Println("Starting test on folder: " + FOLDER)
+		//logger.er.Println("Starting test on folder: " + FOLDER)
 		err := check_files_filename_to_foldername(FOLDER)
 		if err != nil {
-			log.Fatal(err)
+			logger.Fatal(err.Error())
 		}
 
 		/* not crucial test, use only if filename is wrong
 		err = check_files_moddtime_to_foldername(FOLDER)
 		if err != nil {
-			log.Fatal(err)
+			logger.Fatal(err)
 		}
 		*/
 
@@ -79,14 +74,14 @@ func main() {
 		if CONTACTS {
 			err := check_contact_count(FOLDER)
 			if err != nil {
-				log.Fatal(err)
+				logger.Fatal(err.Error())
 			}
 		}
 
 	} // end range FOLDERS
 
 	if LOG {
-		defer logfile.Close()
+		defer logger.Write()
 	}
 }
 
@@ -102,20 +97,24 @@ func parse_args() {
 	flag.Parse()
 
 	if FOLDERS == "" {
-		log.Fatal("Please specify the input folder(s) -i /path/to/2022/W33")
+		logger.Fatal("Please specify the input folder(s) -i /path/to/2022/W33")
 	} else {
 		MY_FOLDERS = strings.Split(FOLDERS, " ")
-		log.Println(FOLDERS)
+		logger.Println(FOLDERS)
 	}
 
 	if OUTPUT != "" {
 		LOG = true
-		log.Println("Appending to logfile: " + OUTPUT)
-		logfile, err := os.OpenFile(OUTPUT, os.O_APPEND|os.O_CREATE|os.O_RDWR, 0666)
-		if err != nil {
-			log.Fatal("Cannot open output file for writing.")
-		}
-		log.SetOutput(logfile)
+		/*
+			logger.Println("Appending to logger.ile: " + OUTPUT)
+			logger.ile, err := os.OpenFile(OUTPUT, os.O_APPEND|os.O_CREATE|os.O_RDWR, 0666)
+			if err != nil {
+				logger.Fatal("Cannot open output file for writing.")
+			}
+			logger.SetOutput(logger.ile)
+		*/
+		logger.Init(OUTPUT)
+
 	}
 
 	if isFlagPassed("c") {
@@ -128,7 +127,7 @@ func parse_args() {
 
 	flag.Usage = func() {
 		fmt.Println("Usage of program:")
-		fmt.Println("./openmedia_files_checker -i \"/path/to/Rundown1 /path/to/Rundown2\" (full path(s) to Rundowns folder(s)) [-o logfile.txt] [-c (do contact counts)] [-w dry run off, doing changes to filesystem]")
+		fmt.Println("./openmedia_files_checker -i \"/path/to/Rundown1 /path/to/Rundown2\" (full path(s) to Rundowns folder(s)) [-o logger.ile.txt] [-c (do contact counts)] [-w dry run off, doing changes to filesystem]")
 	}
 }
 
@@ -155,7 +154,7 @@ func delete_empty(s []string) []string {
 func filename_to_weekno(filename string) (int, error) {
 
 	if filename == "" {
-		log.Fatal("No filename was supplied")
+		logger.Fatal("No filename was supplied")
 		return 0, errors.New("The filename do not exist")
 	} else {
 
@@ -199,9 +198,9 @@ func filename_to_weekno(filename string) (int, error) {
 				/*
 				   // tolerance suggest
 				   if(week-week3 < 1 || week3-week < 1){
-				     log.Println("suggesting cmd: mv " + filename + " " + fmt.Sprint(YEAR) + "/" + fmt.Sprintf("%02d",week3))
+				     logger.Println("suggesting cmd: mv " + filename + " " + fmt.Sprint(YEAR) + "/" + fmt.Sprintf("%02d",week3))
 				   }else if(week-week2 < 1 || week2-week < 1){
-				     log.Println("suggesting cmd: mv " + filename + " " + fmt.Sprint(YEAR) + "/" + fmt.Sprintf("%02d",week2))
+				     logger.Println("suggesting cmd: mv " + filename + " " + fmt.Sprint(YEAR) + "/" + fmt.Sprintf("%02d",week2))
 				   }
 				*/
 
@@ -220,7 +219,7 @@ func filename_to_weekno(filename string) (int, error) {
 func get_inner_weekno(filename string) (int, int, error) {
 	file, err := os.Open(filename)
 	if err != nil {
-		log.Fatal("Error reading file: " + filename)
+		logger.Fatal("Error reading file: " + filename)
 	}
 
 	var Year int = -1
@@ -258,9 +257,9 @@ func get_inner_weekno(filename string) (int, int, error) {
 		}
 	}
 	err = file.Close()
-	//                    log.Printf("first:W%02d, last: W%02d\n",first,last)
+	//                    logger.Printf("first:W%02d, last: W%02d\n",first,last)
 	if err != nil {
-		log.Fatal(err)
+		logger.Fatal(err.Error())
 	}
 	return Year, week, err
 }
@@ -269,7 +268,7 @@ func get_contact_count(filename string) (int, error) {
 
 	file, err := os.Open(filename)
 	if err != nil {
-		log.Fatal("Error reading file: " + filename)
+		logger.Fatal("Error reading file: " + filename)
 	}
 	var count int = 0
 
@@ -283,12 +282,12 @@ func get_contact_count(filename string) (int, error) {
 	}
 
 	if err := file.Close(); err != nil {
-		log.Fatal(err)
+		logger.Fatal(err.Error())
 		return -1, err
 	}
 
 	if count == -1 {
-		log.Fatal("Error processing data")
+		logger.Fatal("Error processing data")
 		return -1, err
 	}
 
@@ -328,7 +327,7 @@ func check_files_filename_to_foldername(FOLDER string) error {
 	foldername := filepath.Base(FOLDER)
 	files, err := ioutil.ReadDir(FOLDER)
 	if err != nil {
-		log.Fatal(err)
+		logger.Fatal(err.Error())
 		return err
 	}
 
@@ -340,18 +339,18 @@ func check_files_filename_to_foldername(FOLDER string) error {
 			year, week_no, err := get_inner_weekno(filepath.Join(FOLDER, fn.Name()))
 
 			if err != nil {
-				log.Println(err)
+				logger.Println(err.Error())
 			}
 
 			dir_no, err := strconv.Atoi(strings.Split(fmt.Sprint(FOLDER), "W")[1])
 			if err != nil {
-				log.Println(err)
+				logger.Println(err.Error())
 			}
 
 			if week_no == dir_no {
 				count += 1
 			} else {
-				//log.Println(FOLDER + "/" + fn.Name() + " filename_to_weekno failed: " fmt.Sprintf("%02d", week_no))
+				//logger.Println(FOLDER + "/" + fn.Name() + " filename_to_weekno failed: " fmt.Sprintf("%02d", week_no))
 
 				errornous_filenames = append(errornous_filenames, "mv "+filepath.Join(FOLDER, fn.Name())+" "+folder_name_to_new_one(FOLDER, year, week_no)+"/"+fn.Name())
 			}
@@ -362,29 +361,29 @@ func check_files_filename_to_foldername(FOLDER string) error {
 	}
 
 	if count == len(files) {
-		log.Println(foldername + ": Comparing inner date to foldername: " + fmt.Sprint(count) + "/" + fmt.Sprint(len(files)) + " SUCCESS!")
+		logger.Println(foldername + ": Comparing inner date to foldername: " + fmt.Sprint(count) + "/" + fmt.Sprint(len(files)) + " SUCCESS!")
 	} else {
-		log.Println(foldername + ": Comparing inner date to foldername: " + fmt.Sprint(count) + "/" + fmt.Sprint(len(files)) + " FAILURE!")
+		logger.Println(foldername + ": Comparing inner date to foldername: " + fmt.Sprint(count) + "/" + fmt.Sprint(len(files)) + " FAILURE!")
 		for _, ef := range errornous_filenames {
 			if DRY_RUN {
-				log.Println("DRY_RUN on: " + fmt.Sprint(ef))
+				logger.Println("DRY_RUN on: " + fmt.Sprint(ef))
 			} else {
 				command := strings.Split(fmt.Sprint(ef), " ")
 
-				log.Println("DRY_RUN off: " + fmt.Sprint(ef))
+				logger.Println("DRY_RUN off: " + fmt.Sprint(ef))
 
 				// move files
 				if command[0] == "mv" {
 
 					err := os.Rename(command[1], command[2])
 					if err != nil {
-						log.Println(err)
+						logger.Println(err.Error())
 					}
 					//remove files
 				} else if command[0] == "rm" {
 					err := os.Remove(command[1])
 					if err != nil {
-						log.Println(err)
+						logger.Println(err.Error())
 					}
 				}
 			}
@@ -403,17 +402,17 @@ func check_contact_count(FOLDER string) error {
 
 	files, err := ioutil.ReadDir(FOLDER)
 	if err != nil {
-		log.Fatal(err)
+		logger.Fatal(err.Error())
 		return errors.New("Cannot read directory")
 	}
 
-	log.Println("Checking contacts ...")
+	logger.Println("Checking contacts ...")
 
 	for _, fn := range files {
 		if strings.Contains(fn.Name(), ".xml") {
 			contacts, err := get_contact_count(filepath.Join(FOLDER, fn.Name()))
 			if err != nil {
-				log.Fatal(err)
+				logger.Fatal(err.Error())
 			}
 			contactsTotal += contacts
 			checked++
@@ -421,7 +420,7 @@ func check_contact_count(FOLDER string) error {
 			errornous_filenames = append(errornous_filenames, "Not a xml file: "+fn.Name())
 		}
 	}
-	log.Println("No. of contacts collected: " + fmt.Sprint(contactsTotal) + " SUCCESS!")
+	logger.Println("No. of contacts collected: " + fmt.Sprint(contactsTotal) + " SUCCESS!")
 	return nil
 }
 
@@ -434,30 +433,30 @@ func check_files_moddtime_to_foldername(FOLDER string) error {
 	foldername := filepath.Base(FOLDER)
 	files, err := ioutil.ReadDir(FOLDER)
 	if err != nil {
-		log.Fatal(err)
+		logger.Fatal(err.Error())
 		return errors.New("Cannot read directory")
 	}
 
-	//log.Println(foldername)
+	//logger.Println(foldername)
 
 	for _, fn := range files {
 		if strings.Contains(fn.Name(), ".xml") {
 
 			week_no, err := strconv.Atoi(strings.Split(fmt.Sprint(fn.ModTime().ISOWeek()), " ")[1])
 			if err != nil {
-				log.Fatal(err)
+				logger.Fatal(err.Error())
 			}
 
 			dir_no, err := strconv.Atoi(strings.Split(fmt.Sprint(foldername), "W")[1])
 			if err != nil {
-				log.Fatal(err)
+				logger.Fatal(err.Error())
 			}
 
 			if week_no == dir_no {
 				checked += 1
 			} else {
 				errornous_filenames = append(errornous_filenames, "Wrong modtime descriptor in file: "+foldername+"/"+fn.Name())
-				// log.Printf("file was modded on: %v and is in dir %v (%s)",week_no,dir_no,fn.Name())
+				// logger.Printf("file was modded on: %v and is in dir %v (%s)",week_no,dir_no,fn.Name())
 			}
 
 			if CONTACTS {
@@ -470,13 +469,13 @@ func check_files_moddtime_to_foldername(FOLDER string) error {
 	} // end range files
 
 	if checked == len(files) {
-		log.Println(foldername + ": Comparing file modtime to foldername: " + fmt.Sprint(checked) + "/" + fmt.Sprint(len(files)) + "   SUCCESS!")
+		logger.Println(foldername + ": Comparing file modtime to foldername: " + fmt.Sprint(checked) + "/" + fmt.Sprint(len(files)) + "   SUCCESS!")
 	} else {
-		log.Println(foldername + ": Comparing file modtime to foldername: " + fmt.Sprint(checked) + "/" + fmt.Sprint(len(files)) + "   FAILURE!")
+		logger.Println(foldername + ": Comparing file modtime to foldername: " + fmt.Sprint(checked) + "/" + fmt.Sprint(len(files)) + "   FAILURE!")
 		/*
 			                move map needed here
 			                for _, ef := range errornous_filenames {
-						log.Println("mismatch found: " + fmt.Sprint(ef))
+						logger.Println("mismatch found: " + fmt.Sprint(ef))
 					}
 
 		*/
