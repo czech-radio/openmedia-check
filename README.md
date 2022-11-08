@@ -2,7 +2,7 @@
 
 **The program finds wrongly organized OpenMedia rundown files within the given directory.**
 
-Program which detects:
+## Features
 
 - bad modtimes in files whitin rundown repository (disk cro.cz)
 - (todo) number of contacts per week
@@ -10,7 +10,7 @@ Program which detects:
 
 ## Installation
 
-```powershell
+```bash
 git clone https://github.com/czech-radio/openmedia-files-checker.git
 cd openmedia-files-checker
 go mod tidy
@@ -22,7 +22,7 @@ You should have mounted "Openmedia folder" `/xyz/cro.cz/Rundowns/2022/W01` or ch
 
 When it runs well, you should see something like this on the output:
 
-```
+```bash
 2022/10/24 15:33:07 Checking Rundown count Year 2020
 2020/W12: comparing file modtime to foldername: 324/324 PASSED!
 2020/W13: comparing file modtime to foldername: 1632/1632 PASSED!
