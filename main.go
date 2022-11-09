@@ -35,17 +35,12 @@ type JSONformat struct {
 	Date string ``
 }
 
-//// INIT /////////////////////////////////////////////////////////
-
 func init() {
 	logger = JSONLogger{Filename: "log.json"}
-	parse_args()
+	parseArguments()
 }
 
-//// MAIN /////////////////////////////////////////////////////////
-
 func main() {
-
 	for _, FOLDER := range MY_FOLDERS {
 
 		// main check here
@@ -69,11 +64,7 @@ func main() {
 	}
 }
 
-//// FUNCTIONS ////////////////////////////////////////////////////
-
-
-func parse_args() {
-
+func parseArguments() {
 	flag.StringVar(&FOLDERS, "i", "", "Please specify the input path(s)")
 	flag.StringVar(&OUTPUT, "o", "", "Please specify the output file")
 	flag.Bool("c", false, "Count contacts")
@@ -117,7 +108,7 @@ func isFlagPassed(name string) bool {
 	return found
 }
 
-func delete_empty(s []string) []string {
+func removeEmptyStrings(s []string) []string {
 	var r []string
 	for _, str := range s {
 		if str != "" {
@@ -127,8 +118,7 @@ func delete_empty(s []string) []string {
 	return r
 }
 
-// this work well
-func get_inner_weekno(filename string) (int, int, error) {
+func parseWeekNumber(filename string) (int, int, error) {
 	file, err := os.Open(filename)
 	if err != nil {
 		logger.Fatal("Error reading file: " + filename)
@@ -161,7 +151,7 @@ func get_inner_weekno(filename string) (int, int, error) {
 	return Year, week, err
 }
 
-func get_contact_count(filename string) (int, error) {
+func countContacts(filename string) (int, error) {
 
 	file, err := os.Open(filename)
 	if err != nil {
@@ -224,7 +214,7 @@ func check_files_inner_date_to_foldername(FOLDER string) error {
 
 	for _, fn := range files {
 		if strings.Contains(fn.Name(), ".xml") {
-			year, week_no, err := get_inner_weekno(filepath.Join(FOLDER, fn.Name()))
+			year, week_no, err := parseWeekNumber(filepath.Join(FOLDER, fn.Name()))
 
 			if err != nil {
 				logger.Fatal(err.Error())
@@ -294,7 +284,7 @@ func check_contact_count(FOLDER string) error {
 
 	for _, fn := range files {
 		if strings.Contains(fn.Name(), ".xml") {
-			contacts, err := get_contact_count(filepath.Join(FOLDER, fn.Name()))
+			contacts, err := countContacts(filepath.Join(FOLDER, fn.Name()))
 			if err != nil {
 				logger.Fatal(err.Error())
 			}
