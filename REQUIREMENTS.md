@@ -16,8 +16,8 @@ V případě souborů představujích rundowny se export provádí hromadně jed
 - [ ] Program je dobře dokumentován a otestován.
 - [x] Program může být použit jako součást Unix pipeline tzn. správně pracuje s `stdin/stdout/stderr`.
 - [x] Vstupem jsou cesty k vyšetřovaným adresářům. 
-- [ ] Výstupem je **kontrola chybovosti** a **souhrnná statistika** o obsahu daných adresářů v podobě JSON objektu.
-  - [ ] Chyby budou jasně definovány pomocí kódu (čísla/zkratky) a popisu. 
+- [x] Výstupem je **kontrola chybovosti** a **souhrnná statistika** o obsahu daných adresářů v podobě JSON objektu.
+  - [x] Chyby budou jasně definovány pomocí kódu (čísla/zkratky) a popisu. 
 
 Jako textový výstup požadujeme JSON objekt z důvodů dalšího zpracování např. pomocí programu [jq](https://stedolan.github.io/jq/).
 Přesná podoba JSON objektu je zatím ponechána na zpracovateli a bude průbežně doplňována.

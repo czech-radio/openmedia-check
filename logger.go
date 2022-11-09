@@ -54,7 +54,7 @@ func (logger *JSONLogger) Fatal(message string) (string, error) {
 }
 
 func (logger *JSONLogger) Warn(message string) (string, error) {
-	messageType := "Warning"
+	messageType := "warning"
 	status := 2
         newMsg := Message{Date: time.Now().String(), Type: messageType, Status: status, Msg: message}
 	logger.Messages = append(logger.Messages, newMsg)

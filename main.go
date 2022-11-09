@@ -9,6 +9,7 @@ import (
 
 	"io/ioutil"
 	"os"
+//        "regexp"
 
 	"strconv"
 	"strings"
@@ -84,6 +85,7 @@ func main() {
 
 //// FUNCTIONS ////////////////////////////////////////////////////
 
+
 func parse_args() {
 
 	flag.StringVar(&FOLDERS, "i", "", "Please specify the input path(s)")
@@ -96,9 +98,9 @@ func parse_args() {
 	if FOLDERS == "" {
 		logger.Fatal("Please specify the input folder(s) -i /path/to/2022/W33")
 	} else {
-		MY_FOLDERS = strings.Split(FOLDERS, " ")
-		//logger.Println(FOLDERS)
-	}
+		
+               MY_FOLDERS = strings.Split(FOLDERS, " ")
+        }
 
 	if OUTPUT != "" {
 		LOG = true
@@ -343,7 +345,7 @@ func check_files_inner_date_to_foldername(FOLDER string) error {
 
 				errornous_filenames = append(errornous_filenames, "mv "+filepath.Join(FOLDER, fn.Name())+" "+folder_name_to_new_one(FOLDER, year, week_no)+"/"+fn.Name())
 			}
-		} else {
+		} else if !fn.IsDir() {
 			errornous_filenames = append(errornous_filenames, "rm "+filepath.Join(FOLDER, fn.Name()))
 
 		}
