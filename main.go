@@ -9,7 +9,6 @@ import (
 
 	"io/ioutil"
 	"os"
-//        "regexp"
 
 	"strconv"
 	"strings"
@@ -18,12 +17,6 @@ import (
 	"golang.org/x/text/encoding/unicode"
 	"golang.org/x/text/transform"
 )
-
-//// TODO  ////////////////////////////////////////////////////////
-// detect naming function, done
-// map of suggested moves
-// json logger.ing
-//////////////////////////
 
 //// SCOPE ////////////////////////////////////////////////////////
 
@@ -141,72 +134,6 @@ func delete_empty(s []string) []string {
 	return r
 }
 
-// unused
-func filename_to_weekno(filename string) (int, error) {
-
-	if filename == "" {
-		logger.Fatal("No filename was supplied")
-		return 0, errors.New("The filename do not exist")
-	} else {
-
-		split1 := strings.Split(filename, "-")
-		ss := strings.Split(split1[len(split1)-1], "_")
-		ss = delete_empty(ss)
-		end := ss[len(ss)-1]
-
-		// parse end DATA
-		dateInt, _ := strconv.Atoi(end[6:8])
-		month, _ := strconv.Atoi(end[4:6])
-		year, _ := strconv.Atoi(end[0:4])
-		then := time.Date(year, time.Month(month), dateInt, 0, 0, 0, 0, time.UTC)
-		_, week := then.ISOWeek()
-
-		// parse beginning DATE
-		offset := 1
-		dateInt2, _ := strconv.Atoi(ss[offset])
-		month2, _ := strconv.Atoi(ss[offset+1])
-		year2, _ := strconv.Atoi(ss[offset+2])
-		then2 := time.Date(year2, time.Month(month2), dateInt2, 0, 0, 0, 0, time.UTC)
-		_, week2 := then2.ISOWeek()
-
-		if week != week2 {
-			/*
-			   fmt.Printf("%02d %02d %04d\n",dateInt,month,year)
-			   fmt.Printf("%02d %02d %04d\n",dateInt2,month2,year2)
-			   fmt.Printf("%v %v %v\n",ss[offset],ss[offset+1],ss[offset+2])
-			*/
-
-			// try to fix offset
-			offset = 0
-			dateInt3, _ := strconv.Atoi(ss[offset])
-			month3, _ := strconv.Atoi(ss[offset+1])
-			year3, _ := strconv.Atoi(ss[offset+2])
-			then3 := time.Date(year3, time.Month(month3), dateInt3, 0, 0, 0, 0, time.UTC)
-			_, week3 := then3.ISOWeek()
-
-			if week != week3 {
-
-				/*
-				   // tolerance suggest
-				   if(week-week3 < 1 || week3-week < 1){
-				     logger.Println("suggesting cmd: mv " + filename + " " + fmt.Sprint(YEAR) + "/" + fmt.Sprintf("%02d",week3))
-				   }else if(week-week2 < 1 || week2-week < 1){
-				     logger.Println("suggesting cmd: mv " + filename + " " + fmt.Sprint(YEAR) + "/" + fmt.Sprintf("%02d",week2))
-				   }
-				*/
-
-				return -1, errors.New("problematic file:" + filename + " marks either W" + fmt.Sprintf("%02d", week2) + " and W" + fmt.Sprintf("%02d", week))
-
-				//fmt.Println("mv "+filename+" ../W"+fmt.Sprintf("%02d",week3))
-			} else {
-				return week, nil
-			}
-		} else {
-			return week, nil
-		}
-	}
-}
-
 // this work well
 func get_inner_weekno(filename string) (int, int, error) {
 	file, err := os.Open(filename)
@@ -217,11 +144,6 @@ func get_inner_weekno(filename string) (int, int, error) {
 	var Year int = -1
 	var week int = -1
 
-	/*
-	   var counter int = 0
-	   var first int = 0
-	   var last int = 0
-	*/
 	scanner := bufio.NewScanner(transform.NewReader(file, unicode.UTF16(unicode.LittleEndian, unicode.UseBOM).NewDecoder()))
 	for scanner.Scan() {
 		var line string = fmt.Sprintln(scanner.Text())
@@ -286,14 +208,7 @@ func get_contact_count(filename string) (int, error) {
 }
 
 func folder_name_to_new_one(folder string, year int, month int) string {
-	//split := strings.Split(folder,fmt.Sprint(filepath.Separator))
 	split := strings.Split(folder, "/")
-
-	/*
-	   if(len(split) < 2) {
-
-	     err := errors.New("Invalid path, path should end with YYYY/WMM")
-	   }*/
 
 	split[len(split)-1] = fmt.Sprintf("W%02d", month)
 	split[len(split)-2] = fmt.Sprintf("%04d", year)
@@ -310,7 +225,6 @@ func folder_name_to_new_one(folder string, year int, month int) string {
 	}
 
 	return newpath
-
 }
 
 func check_files_inner_date_to_foldername(FOLDER string) error {
@@ -341,8 +255,6 @@ func check_files_inner_date_to_foldername(FOLDER string) error {
 			if week_no == dir_no {
 				count += 1
 			} else {
-				//logger.Println(FOLDER + "/" + fn.Name() + " filename_to_weekno failed: " fmt.Sprintf("%02d", week_no))
-
 				errornous_filenames = append(errornous_filenames, "mv "+filepath.Join(FOLDER, fn.Name())+" "+folder_name_to_new_one(FOLDER, year, week_no)+"/"+fn.Name())
 			}
 		} else if !fn.IsDir() {
@@ -412,65 +324,3 @@ func check_contact_count(FOLDER string) error {
 	logger.Println("No. of contacts collected: " + fmt.Sprint(contactsTotal) + " SUCCESS!")
 	return nil
 }
-
-// unused
-/*
-func check_files_moddtime_to_foldername(FOLDER string) error {
-
-	checked := 0
-	var errornous_filenames []string
-
-	foldername := filepath.Base(FOLDER)
-	files, err := ioutil.ReadDir(FOLDER)
-	if err != nil {
-		logger.Fatal(err.Error())
-		return errors.New("Cannot read directory")
-	}
-
-	//logger.Println(foldername)
-
-	for _, fn := range files {
-		if strings.Contains(fn.Name(), ".xml") {
-
-			week_no, err := strconv.Atoi(strings.Split(fmt.Sprint(fn.ModTime().ISOWeek()), " ")[1])
-			if err != nil {
-				logger.Fatal(err.Error())
-			}
-
-			dir_no, err := strconv.Atoi(strings.Split(fmt.Sprint(foldername), "W")[1])
-			if err != nil {
-				logger.Fatal(err.Error())
-			}
-
-			if week_no == dir_no {
-				checked += 1
-			} else {
-				errornous_filenames = append(errornous_filenames, "Wrong modtime descriptor in file: "+foldername+"/"+fn.Name())
-				// logger.Printf("file was modded on: %v and is in dir %v (%s)",week_no,dir_no,fn.Name())
-			}
-
-			if CONTACTS {
-			}
-
-		} else {
-			errornous_filenames = append(errornous_filenames, "Not a xml file: "+fn.Name())
-		}
-
-	} // end range files
-
-	if checked == len(files) {
-		logger.Println(foldername + ": Comparing file modtime to foldername: " + fmt.Sprint(checked) + "/" + fmt.Sprint(len(files)) + "   SUCCESS!")
-	} else {
-		logger.Fatal(foldername + ": Comparing file modtime to foldername: " + fmt.Sprint(checked) + "/" + fmt.Sprint(len(files)) + "   FAILURE!")
-
-		//	                move map needed here
-		//	                for _, ef := range errornous_filenames {
-		//				logger.Println("mismatch found: " + fmt.Sprint(ef))
-		//			}
-
-
-	}
-
-	return nil
-}
-*/
