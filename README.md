@@ -4,9 +4,9 @@
 
 ## Features
 
-- Report wrongly placed files.
-- Report number of contacts per week.
-- Match contacts to the given stations.
+- Reports wrongly placed files.
+- Moves wrongly placed files in folders.
+- Reports number of contacts per week.
 
 ## Installation
 
@@ -35,17 +35,21 @@ You can change the path to the directory beginning with `WXX`.
 ```bash
 ./openmedia-files-checker -i "/path/to/mounted/Rundowns/2022/W01 /path/to/mounted/Rundowns/2022/W33" [optional -o log.txt] [optional -w write changes]
 ```
+## Flags
+
+- `-i` - input folder which ends with `WXX` or multiple input folders in doublequotes `"/path/to/2022/201 /path/to/2022/W02"`
+- `-o` - output log file in json format ie `log.json`
+- `-c` - check contact counts in files (can be slow)
+- `-w` - do changes to filesystem
+
 
 When it runs well, you should see something like this on the output:
 
-```bash
-2022/10/24 15:33:07 Checking Rundown count Year 2020
-2020/W12: comparing file modtime to foldername: 324/324 PASSED!
-2020/W13: comparing file modtime to foldername: 1632/1632 PASSED!
-2020/W14: comparing file modtime to foldername: 456/456 PASSED!
-2020/W15: comparing file modtime to foldername: 456/456 PASSED!
-2020/W16: comparing file modtime to foldername: 456/456 PASSED!
-2020/W17: comparing file modtime to foldername: 456/456 PASSED!
-2020/W18: comparing file modtime to foldername: 456/456 PASSED!
-...
+```json
+{
+    "date": "2022-11-09 10:44:27.1448431 +0100 CET m=+488.826201429",
+    "type": "info",
+    "message": "/mnt/cro.cz/Rundowns/2022/W01 test result: 498/498 SUCCESS!",
+    "status": 0
+}
 ```
