@@ -54,13 +54,6 @@ func main() {
 			logger.Fatal(err.Error())
 		}
 
-		/* not crucial test, use only if filename is wrong
-		err = check_files_moddtime_to_foldername(FOLDER)
-		if err != nil {
-			logger.Fatal(err)
-		}
-		*/
-
 		// optional checking contact count
 		if CONTACTS {
 			err := check_contact_count(FOLDER)
@@ -156,16 +149,6 @@ func get_inner_weekno(filename string) (int, int, error) {
 			year, _ := strconv.Atoi(line[offset+offset2 : offset+offset2+4])
 			then := time.Date(year, time.Month(month), dateInt, 0, 0, 0, 0, time.UTC)
 			Year, week = then.ISOWeek()
-
-			/*
-						   if counter == 0{
-						     first = week
-						   }
-						   last = week
-				                   logger.Printf("first:W%02d, last: W%02d\n",first,last)
-
-						   counter++
-			*/
 
 			// get first only?
 			break
