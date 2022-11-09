@@ -42,6 +42,12 @@ You can change the path to the directory beginning with `WXX`.
 - `-c` - check contact counts in files (can be slow)
 - `-w` - do changes to filesystem
 
+## Error messages
+thy contains four fileds
+- `date` - timestamp of when it occurs
+- `type` - can be either `info`, `error` or `warning`
+- `message` - human readable message what happened
+- `status` - can be either `0` - info, `1` - error, `2` - warning (usually when file operations are done) this should be machine readable
 
 When it runs well, you should see something like this on the output:
 
