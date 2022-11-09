@@ -43,7 +43,7 @@ You can change the path to the directory beginning with `WXX`.
 - `-w` - do changes to filesystem
 
 ## Error messages
-thy contains four fileds
+JSON mesasge contains four following fileds:
 - `date` - timestamp of when it occurs
 - `type` - can be either `info`, `error` or `warning`
 - `message` - human readable message what happened
