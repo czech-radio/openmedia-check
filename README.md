@@ -33,7 +33,7 @@ The "OpenMedia export folder must be mounted (accessible) `/xyz/cro.cz/Rundowns/
 You can change the path to the directory beginning with `WXX`.
 
 ```bash
-./openmedia-files-checker -i "/path/to/mounted/Rundowns/2022/W01 /path/to/mounted/Rundowns/2022/W33" [optional -o log.txt] [optional -w write changes]
+./openmedia-files-checker -i "/path/to/mounted/Rundowns/2022/W01 /path/to/mounted/Rundowns/2022/W33" [optional -o log.txt] [optional -w write changes] [optional -c count contacts]
 ```
 ## Flags
 
