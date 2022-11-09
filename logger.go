@@ -16,6 +16,7 @@ type Message struct {
 	Date string `json:"date"`
 	Type string `json:"type"`
 	Msg  string `json:"message"`
+	Status int `json:"status"`
 }
 
 func (logger *JSONLogger) Init(filename string) {
@@ -26,10 +27,11 @@ func (logger *JSONLogger) Init(filename string) {
 
 func (logger *JSONLogger) Println(message string) (string, error) {
 	messageType := "info"
-	newMsg := Message{Date: time.Now().String(), Type: messageType, Msg: message}
+	status := 0
+        newMsg := Message{Date: time.Now().String(), Type: messageType, Status: status, Msg: message}
 	logger.Messages = append(logger.Messages, newMsg)
 
-	val, err := json.Marshal(newMsg)
+	val, err := json.MarshalIndent(newMsg,"","    ")
 	if err != nil {
 		return "", err
 	}
@@ -39,10 +41,25 @@ func (logger *JSONLogger) Println(message string) (string, error) {
 
 func (logger *JSONLogger) Fatal(message string) (string, error) {
 	messageType := "error"
-	newMsg := Message{Date: time.Now().String(), Type: messageType, Msg: message}
+	status := 1
+        newMsg := Message{Date: time.Now().String(), Type: messageType, Status: status, Msg: message}
 	logger.Messages = append(logger.Messages, newMsg)
 
-	val, err := json.Marshal(newMsg)
+	val, err := json.MarshalIndent(newMsg,"","    ")
+	if err != nil {
+		return "", err
+	}
+	fmt.Println(string(val))
+	return string(val), nil
+}
+
+func (logger *JSONLogger) Warn(message string) (string, error) {
+	messageType := "Warning"
+	status := 2
+        newMsg := Message{Date: time.Now().String(), Type: messageType, Status: status, Msg: message}
+	logger.Messages = append(logger.Messages, newMsg)
+
+	val, err := json.MarshalIndent(newMsg,"","    ")
 	if err != nil {
 		return "", err
 	}

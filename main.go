@@ -355,11 +355,11 @@ func check_files_inner_date_to_foldername(FOLDER string) error {
 		logger.Fatal(FOLDER + " test result: " + fmt.Sprint(count) + "/" + fmt.Sprint(len(files)) + " FAILURE!")
 		for _, ef := range errornous_filenames {
 			if DRY_RUN {
-				logger.Println("DRY_RUN ON (not) doing: " + fmt.Sprint(ef))
+				logger.Warn("DRY_RUN ON (not) doing: " + fmt.Sprint(ef))
 			} else {
 				command := strings.Split(fmt.Sprint(ef), " ")
 
-				logger.Println("SHARP_MODE ON doing: " + fmt.Sprint(ef))
+				logger.Warn("SHARP_MODE ON doing: " + fmt.Sprint(ef))
 
 				// move files
 				if command[0] == "mv" {
@@ -392,10 +392,8 @@ func check_contact_count(FOLDER string) error {
 	files, err := ioutil.ReadDir(FOLDER)
 	if err != nil {
 		logger.Fatal(err.Error())
-		return errors.New("Cannot read directory")
+		return err
 	}
-
-	logger.Println("Checking contacts ...")
 
 	for _, fn := range files {
 		if strings.Contains(fn.Name(), ".xml") {
