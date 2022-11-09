@@ -28,15 +28,12 @@ import (
 
 const VERSION = "0.0.2"
 
-var CONTACTS bool
 var logger JSONLogger
 
-// var FOLDER string = ""
 var OUTPUT string = ""
 var LOG bool = false
 var DRY_RUN bool = true
-var logfile os.File
-
+var CONTACTS bool = false
 var FOLDERS string
 var MY_FOLDERS []string
 
@@ -47,7 +44,7 @@ type JSONformat struct {
 //// INIT /////////////////////////////////////////////////////////
 
 func init() {
-	logger = JSONLogger{Filename: "test.json"}
+	logger = JSONLogger{Filename: "log.json"}
 	parse_args()
 }
 
@@ -57,7 +54,7 @@ func main() {
 
 	for _, FOLDER := range MY_FOLDERS {
 
-		//logger.er.Println("Starting test on folder: " + FOLDER)
+		// main check here
 		err := check_files_inner_date_to_foldername(FOLDER)
 		if err != nil {
 			logger.Fatal(err.Error())
@@ -105,16 +102,7 @@ func parse_args() {
 
 	if OUTPUT != "" {
 		LOG = true
-		/*
-			logger.Println("Appending to logger.ile: " + OUTPUT)
-			logger.ile, err := os.OpenFile(OUTPUT, os.O_APPEND|os.O_CREATE|os.O_RDWR, 0666)
-			if err != nil {
-				logger.Fatal("Cannot open output file for writing.")
-			}
-			logger.SetOutput(logger.ile)
-		*/
 		logger.Init(OUTPUT)
-
 	}
 
 	if isFlagPassed("c") {
@@ -127,7 +115,7 @@ func parse_args() {
 
 	flag.Usage = func() {
 		fmt.Println("Usage of program:")
-		fmt.Println("./openmedia_files_checker -i \"/path/to/Rundown1 /path/to/Rundown2\" (full path(s) to Rundowns folder(s)) [-o logger.ile.txt] [-c (do contact counts)] [-w dry run off, doing changes to filesystem]")
+		fmt.Println("./openmedia_files_checker -i \"/path/to/Rundown1 /path/to/Rundown2\" (full path(s) to Rundowns folder(s)) [-o log file.json] [-c (do contact counts)] [-w dry run off, doing changes to filesystem]")
 	}
 }
 
@@ -151,6 +139,7 @@ func delete_empty(s []string) []string {
 	return r
 }
 
+// unused
 func filename_to_weekno(filename string) (int, error) {
 
 	if filename == "" {
@@ -216,6 +205,7 @@ func filename_to_weekno(filename string) (int, error) {
 	}
 }
 
+// this work well
 func get_inner_weekno(filename string) (int, int, error) {
 	file, err := os.Open(filename)
 	if err != nil {
@@ -236,7 +226,7 @@ func get_inner_weekno(filename string) (int, int, error) {
 		var offset = strings.Index(line, "<OM_DATETIME>")
 		if offset != -1 && strings.Contains(line, "\"Čas začátku\" IsEmpty = \"no\"") {
 
-			offset2 := 13
+			offset2 := 13 // len of <OM_DATETIME> string
 			dateInt, _ := strconv.Atoi(line[offset+offset2+6 : offset+offset2+8])
 			month, _ := strconv.Atoi(line[offset+offset2+4 : offset+offset2+6])
 			year, _ := strconv.Atoi(line[offset+offset2 : offset+offset2+4])
@@ -244,12 +234,13 @@ func get_inner_weekno(filename string) (int, int, error) {
 			Year, week = then.ISOWeek()
 
 			/*
-			   if counter == 0{
-			     first = week
-			   }
-			   last = week
+						   if counter == 0{
+						     first = week
+						   }
+						   last = week
+				                   logger.Printf("first:W%02d, last: W%02d\n",first,last)
 
-			   counter++
+						   counter++
 			*/
 
 			// get first only?
@@ -257,7 +248,6 @@ func get_inner_weekno(filename string) (int, int, error) {
 		}
 	}
 	err = file.Close()
-	//                    logger.Printf("first:W%02d, last: W%02d\n",first,last)
 	if err != nil {
 		logger.Fatal(err.Error())
 	}
@@ -276,7 +266,6 @@ func get_contact_count(filename string) (int, error) {
 	for scanner.Scan() {
 		var line string = fmt.Sprintln(scanner.Text())
 		if strings.Contains(line, "\"ContactContainerFieldID\" IsEmpty = \"no\"") {
-			//fmt.Println(fmt.Sprint(count) + " " + line)
 			count += 1
 		}
 	}
@@ -361,7 +350,7 @@ func check_files_inner_date_to_foldername(FOLDER string) error {
 	}
 
 	if count == len(files) {
-              logger.Println(FOLDER + " test result: " + fmt.Sprint(count) + "/" + fmt.Sprint(len(files)) + " SUCCESS!")
+		logger.Println(FOLDER + " test result: " + fmt.Sprint(count) + "/" + fmt.Sprint(len(files)) + " SUCCESS!")
 	} else {
 		logger.Fatal(FOLDER + " test result: " + fmt.Sprint(count) + "/" + fmt.Sprint(len(files)) + " FAILURE!")
 		for _, ef := range errornous_filenames {
@@ -425,6 +414,7 @@ func check_contact_count(FOLDER string) error {
 }
 
 // unused
+/*
 func check_files_moddtime_to_foldername(FOLDER string) error {
 
 	checked := 0
@@ -472,14 +462,15 @@ func check_files_moddtime_to_foldername(FOLDER string) error {
 		logger.Println(foldername + ": Comparing file modtime to foldername: " + fmt.Sprint(checked) + "/" + fmt.Sprint(len(files)) + "   SUCCESS!")
 	} else {
 		logger.Fatal(foldername + ": Comparing file modtime to foldername: " + fmt.Sprint(checked) + "/" + fmt.Sprint(len(files)) + "   FAILURE!")
-		/*
-			                move map needed here
-			                for _, ef := range errornous_filenames {
-						logger.Println("mismatch found: " + fmt.Sprint(ef))
-					}
 
-		*/
+		//	                move map needed here
+		//	                for _, ef := range errornous_filenames {
+		//				logger.Println("mismatch found: " + fmt.Sprint(ef))
+		//			}
+
+
 	}
 
 	return nil
 }
+*/
