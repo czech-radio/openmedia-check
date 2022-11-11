@@ -1,4 +1,4 @@
-# openmedia-files-checker
+# openmedia-checker
 
 **The program finds wrongly organized OpenMedia rundown files within the given directory.**
 
