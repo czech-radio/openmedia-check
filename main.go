@@ -11,13 +11,9 @@ import (
 	"log"
 	"os"
 	"strings"
-
-	"github.com/czech-radio/openmedia-check/check"
 )
 
 const VERSION = "0.2.0"
-
-// var logger core.JSONLogger
 
 var OUTPUT string = ""
 var SHOULD_LOG bool = true
@@ -26,9 +22,6 @@ var SHOULD_CHECK_CONTACTS bool = false
 var FOLDERS string
 var MY_FOLDERS []string
 
-type JSONformat struct {
-	Date string ``
-}
 
 func isFlagPassed(name string) bool {
 	found := false
@@ -85,8 +78,12 @@ func main() {
 			log.Fatal(err)
 		}
 
-		actions = append(actions, check.CheckRundowns(folder, files))
+		actions = append(actions, CheckRundowns(folder, files))
 
 	}
-	fmt.Println(actions)
+	for _, action := range actions {
+		for _, item := range action {
+			fmt.Println(item)
+		}
+	}
 }
