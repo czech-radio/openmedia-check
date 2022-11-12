@@ -88,14 +88,14 @@ func CheckRundowns(path string, files []os.FileInfo) []string {
 			year, month, day, fileWeek := ParseRundownDate(fptr)
 			dirWeek, _ := strconv.Atoi(filepath.Base(path)[1:])
 			// [i, , year, month, day, fileWeek, path, file.Name()]
-			result = append(result, `{"status: "`+status[fileWeek == dirWeek]+`"data": {date:`+fmt.Sprint(year)+"-"+fmt.Sprint(month)+"-"+fmt.Sprint(day)+ "-W" +fmt.Sprint(fileWeek)+`} }`)
+			result = append(result, `{"status: "`+status[fileWeek == dirWeek]+`"data": {date:`+fmt.Sprint(year)+"-"+fmt.Sprint(month)+"-"+fmt.Sprint(day)+"-W"+fmt.Sprint(fileWeek)+`} }`)
 			sem <- struct{}{}
 		}(i)
 
 		defer fptr.Close()
 	}
 
-	// sem.Wait(len(files));
+	// sem.Wait(len(files)); // FIXME
 
 	return result
 }
@@ -105,7 +105,7 @@ func PlaceRundows(actions []string) {
 }
 
 //----------------------------------------------------------------------------
-// CONTACTS
+// CONTACTS (TODO)
 //----------------------------------------------------------------------------
 
 func parseContact(handle io.Reader) {

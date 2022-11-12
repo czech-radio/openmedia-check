@@ -22,7 +22,6 @@ var SHOULD_CHECK_CONTACTS bool = false
 var FOLDERS string
 var MY_FOLDERS []string
 
-
 func isFlagPassed(name string) bool {
 	found := false
 	flag.Visit(func(f *flag.Flag) {
