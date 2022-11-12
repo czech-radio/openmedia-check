@@ -12,23 +12,32 @@ V případě souborů představujích rundowny se export provádí hromadně jed
 
 ## Požadované funkce
 
-- [x] Program má konzolové rozhraní. 
+- [x] Program má konzolové rozhraní.
 - [ ] Program je dobře dokumentován a otestován.
 - [x] Program může být použit jako součást Unix pipeline tzn. správně pracuje s `stdin/stdout/stderr`.
-- [x] Vstupem jsou cesty k vyšetřovaným adresářům. 
+- [x] Vstupem jsou cesty k vyšetřovaným adresářům.
 - [x] Výstupem je **kontrola chybovosti** a **souhrnná statistika** o obsahu daných adresářů v podobě JSON objektu.
-  - [x] Chyby budou jasně definovány pomocí kódu (čísla/zkratky) a popisu. 
+  - [x] Chyby budou jasně definovány pomocí kódu (čísla/zkratky) a popisu.
 
 Jako textový výstup požadujeme JSON objekt z důvodů dalšího zpracování např. pomocí programu [jq](https://stedolan.github.io/jq/).
 Přesná podoba JSON objektu je zatím ponechána na zpracovateli a bude průbežně doplňována.
 
 ### Kontrola chybovosti
 
-Program pro zadané adresáře zkontroluje, jestli v nich umístěné OpenMedia XML soubory, náleží do adresáře, ve kterém je právě umístěný. Soubor má v názvu uvedené datum tzn., že kontolujeme, jetli uvedené datum v názvu souboru odpovídá adresáři.  
+Program pro zadané adresáře zkontroluje, jestli v nich umístěné OpenMedia XML soubory, náleží do adresáře, ve kterém je právě umístěný. Soubor má v názvu uvedené datum tzn., že kontolujeme, jetli uvedené datum v názvu souboru odpovídá adresáři.
 
 ### Souhrnná statistika
 
 Program by měl podat informaci o množství souborů ve vyšetřovaných adresářích (poměr správně zařazených souboru vs celkové množství souborů).
 
 
+## Poznámky vývojářů
 
+- Pokud máš v Go pole, pak jeho délku zjistíš pomocí `len()`
+- Vracej hodnoty z funkcí, proč stále někde něco vypisuješ?
+  - Nepoužíbvej Print, zakaž si to, vede tě to pak k netestování!
+
+- Neotvírej a nezapisuj do souboru v jedné funkci.
+  - To samé co s `fmt.Println()` . Obecně otevírat soubor, číst hodnoty a provádět výpočty v jedné funkci je netestovatelné. To je stále stejný problém, ať už programuješ v čemkoliv.
+
+- Duplicity, *copy-paste* v několika  funkcích to samé jen změna jednoho textu nebo v jedno funkci třikrát `filepath.Join(folder, fn.Name())`.

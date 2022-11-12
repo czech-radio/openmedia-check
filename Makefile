@@ -1,13 +1,13 @@
 .PHONY: fmt clean build
 .DEFAULT_GOAL := build
 
-BINARY_NAME=openmedia_files_checker
+BINARY_NAME=openmedia-check
 
 fmt:
 	go fmt .
 deps:
 	go mod tidy
-clean: 
+clean:
 	go clean
 	rm ./${BINARY_NAME}
 
