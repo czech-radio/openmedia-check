@@ -74,9 +74,9 @@ When it runs well, you should see something like this on the output:
 Each line is a JSON object and contains the following fields:
 
 - `#` - Sequential batch item index.
-- `date` - Timestamp of when it occurs
-- `level` - Can be either `info`, `error` or `warning`
-- `status` - Can be either `0` - info, `1` - error, `2` - warning
+- `date` - Timestamp of when it occurs.
+- `level` - Can be either `info`, `error` or `warning`.
+- `status` - Can be either `0` - info, `1` - error, `2` - warning.
 - `message` - Human readable status message.
 
 
