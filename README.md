@@ -26,18 +26,21 @@
   ```
 - Step 4
   ```bash
-  go build -o openmedia-check[.exe]
+  go build
   ```
 
 ## Usage
 
 **Prerequisites**
 
-The "OpenMedia export folder must be mounted (accessible) `/xyz/cro.cz/Rundowns/2022/W01`.
-You can change the path to the directory beginning with `WXX`.
+The OpenMedia export folder must accessible (should mounted if you are on Linux mahine).
+We often refer to this path via environment variable `$env:ANNOVA` e.g `$env:ANNOA\Rundowns\2022\W01`
+
+This program can operate only on *week* directores i.e. `W01`-`W52(3)`!
+
 
 ```bash
-./openmedia-check -i "/path/to/rundowns/2022/W01 /path/to/Rundowns/2022/W32" [-o <output_name>] [-w] [-c]
+./openmedia-check -i "$ANNOVA/Rundowns/2022/W01 $ANNOVA/Rundowns/2022/W02" [-o <output_name>] [-w] [-c]
 ```
 
 ### Flags
@@ -47,21 +50,45 @@ You can change the path to the directory beginning with `WXX`.
 - `-c` - Check contact counts in files.
 - `-w` - Write changes to file system.
 
-### Errors
+### Output
 
-JSON message contains the following fields:
-- `date` - timestamp of when it occurs
-- `type` - can be either `info`, `error` or `warning`
-- `message` - human readable message what happened
-- `status` - can be either `0` - info, `1` - error, `2` - warning (usually when file operations are done) this should be machine readable
+Program works as batch and outputs result after all work is finished.
+We are working on continuous streaming.
 
 When it runs well, you should see something like this on the output:
 
 ```json
-{
-    "date": "2022-11-09T10:44:27",
-    "level": "info",
-    "message": "/mnt/cro.cz/Rundowns/2022/W01 test result: 498/498 SUCCESS!",
-    "status": 0
-}
+{"#": 0", status": "SUCCESS", "data": {"date": "2022-11-4", "week": 44, "file": "RD_00-05_Radiožurnál_-_Fri__04_11_2022_2_13519620_20221105001439.xml"} }
+{"#": 1", status": "SUCCESS", "data": {"date": "2022-10-31", "week": 44, "file": "RD_00-05_Radiožurnál_-_Mon__31_10_2022_2_13467409_20221101001437.xml"} }
+{"#": 2", status": "SUCCESS", "data": {"date": "2022-11-6", "week": 44, "file": "RD_00-05_Radiožurnál_-_Neděle_06_11_2022_2_13547024_20221107001352.xml"} }
+{"#": 3", status": "SUCCESS", "data": {"date": "2022-11-5", "week": 44, "file": "RD_00-05_Radiožurnál_-_Sobota_05_11_2022_2_13537307_20221106001425.xml"} }
+{"#": 4", status": "SUCCESS", "data": {"date": "2022-11-1", "week": 44, "file": "RD_00-05_Radiožurnál_-_Tue__01_11_2022_2_13478904_20221102001422.xml"} }
+{"#": 5", status": "SUCCESS", "data": {"date": "2022-11-2", "week": 44, "file": "RD_00-05_Radiožurnál_-_Wed__02_11_2022_2_13493128_20221103001430.xml"} }
+{"#": 6", status": "SUCCESS", "data": {"date": "2022-11-3", "week": 44, "file": "RD_00-05_Radiožurnál_-__Čt_03_11_2022_2_13506313_20221104001434.xml"} }
+{"#": 7", status": "SUCCESS", "data": {"date": "2022-11-6", "week": 44, "file": "RD_00-05_ČRo_Region_SC_-_Neděle_06_11_2022_2_13546661_20221107001347.xml"} }
+{"#": 8", status": "SUCCESS", "data": {"date": "2022-10-31", "week": 44, "file": "RD_00-05_ČRo_Region_SC_-_Pondělí_31_10_2022_2_13467101_20221101001433.xml"} }
+{"#": 9", status": "SUCCESS", "data": {"date": "2022-11-4", "week": 44, "file": "RD_00-05_ČRo_Region_SC_-_Pátek_04_11_2022_2_13519355_20221105001432.xml"} }
+{"#": 10", status": "SUCCESS", "data": {"date": "2022-11-5", "week": 44, "file": "RD_00-05_ČRo_Region_SC_-_Sobota_05_11_2022_2_13537296_20221106001421.xml"} }
+```
+
+Each line is a JSON object and contains the following fields:
+
+- `#` - Sequential batch item index.
+- `date` - Timestamp of when it occurs
+- `level` - Can be either `info`, `error` or `warning`
+- `status` - Can be either `0` - info, `1` - error, `2` - warning
+- `message` - Human readable status message.
+
+
+## Contribution
+
+Propose new feature, enhance existing feature or fix a bug.
+
+
+Some usefull commands:
+
+```bash
+go fmt
+go vet
+go test
 ```
