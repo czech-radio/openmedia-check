@@ -15,13 +15,6 @@ import (
 
 const VERSION = "0.2.0"
 
-var OUTPUT string = ""
-var SHOULD_LOG bool = true
-var SHOULD_WRITE bool = false
-var SHOULD_CHECK_CONTACTS bool = false
-var FOLDERS string
-var MY_FOLDERS []string
-
 func isFlagPassed(name string) bool {
 	found := false
 	flag.Visit(func(f *flag.Flag) {
@@ -32,44 +25,42 @@ func isFlagPassed(name string) bool {
 	return found
 }
 
-func init() {
+func main() {
 
-	flag.StringVar(&FOLDERS, "i", "", "Please specify the input path(s)")
-	flag.StringVar(&OUTPUT, "o", "", "Please specify the output file")
-	flag.Bool("c", false, "Count contacts")
-	flag.Bool("w", true, "Write changes")
+	INPUTS := flag.String("i", "", "The input directories.")
+	OUTPUT := flag.String("o", "", "The output file name.")
+
+	SHOULD_WRITE_CHANGES := flag.Bool("w", false, "Should write changes?")
+	SHOULD_CHECK_CONTACTS := flag.Bool("c", false, "Should count contacts?")
 
 	flag.Parse()
 
-	if FOLDERS == "" {
+	if *INPUTS == "" {
 		fmt.Println("Please specify the input folder(s)")
 		os.Exit(1)
 	}
 
-	if OUTPUT != "" {
-		SHOULD_LOG = true
-		// logger.Init(OUTPUT)
+
+	if *OUTPUT != "" {
+		// Write to stdout
 	}
 
 	if isFlagPassed("w") {
-		SHOULD_WRITE = true
+		*SHOULD_WRITE_CHANGES = true
 	}
 
 	if isFlagPassed("c") {
-		SHOULD_CHECK_CONTACTS = true
+		*SHOULD_CHECK_CONTACTS = true
 	}
 
 	flag.Usage = func() {
 		fmt.Println("Usage:")
-		fmt.Println("./EXE -i \"<path> [paths]... [-o log file.json] [-c (do contact counts)] [-w dry run off, doing changes to filesystem]")
+		fmt.Println(`./openmedia-check -i "<path> [path...]" [-o <file_name>] [-c] [-w]`)
 	}
-}
-
-func main() {
 
 	var actions [][]string
 
-	for _, folder := range strings.Split(FOLDERS, " ") {
+	for _, folder := range strings.Split(*INPUTS, " ") {
 
 		files, err := ioutil.ReadDir(folder)
 
@@ -80,6 +71,7 @@ func main() {
 		actions = append(actions, CheckRundowns(folder, files))
 
 	}
+
 	for _, action := range actions {
 		for _, item := range action {
 			fmt.Println(item)

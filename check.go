@@ -23,7 +23,7 @@ import (
 //  RUNDOWNS
 //----------------------------------------------------------------------------
 
-func ParseRundownDate(handle io.Reader) (int, int, int, int) {
+func ParseRundown(handle io.Reader) (int, int, int, int) {
 
 	var year, month, day, week = 0, 0, 0, 0
 
@@ -32,23 +32,20 @@ func ParseRundownDate(handle io.Reader) (int, int, int, int) {
 	for scanner.Scan() {
 		var line = fmt.Sprintln(scanner.Text())
 
-		if !strings.Contains(line, "FieldID = \"1004\"") {
-			continue
+		if strings.Contains(line, `FieldID = "1004"`) {
+			reg := regexp.MustCompile("(202[0-9]{1})([0-9]{2})([0-9]{2})(T)")
+			res := reg.FindStringSubmatch(line)
+
+			date, err := time.Parse("20060102", res[1]+res[2]+res[3])
+
+			if err != nil {
+				log.Fatal(err)
+			}
+
+			year, month, day = date.Year(), int(date.Month()), date.Day()
+			_, week = date.ISOWeek()
+			break; // Find first occurence!
 		}
-
-		reg := regexp.MustCompile("(202[0-9]{1})([0-9]{2})([0-9]{2})(T)")
-		res := reg.FindStringSubmatch(line)
-
-		date, err := time.Parse("20060102", res[1]+res[2]+res[3])
-
-		if err != nil {
-			log.Fatal(err)
-		}
-
-		year, month, day = date.Year(), int(date.Month()), date.Day()
-		_, week = date.ISOWeek()
-
-		break
 	}
 
 	return year, month, day, week
@@ -67,6 +64,7 @@ func CheckRundowns(path string, files []os.FileInfo) []string {
 		// File shoud be moved because it is a directory.
 		if file.IsDir() {
 			result = append(result, `{"status": "FAILURE", "action": "MOVE"`+", file: "+file.Name()+"}")
+			log.Println("SKIPPING")
 			continue
 		}
 
@@ -75,6 +73,7 @@ func CheckRundowns(path string, files []os.FileInfo) []string {
 		// File shoud be moved because is has wrong file extension.
 		if fext != ".xml" {
 			result = append(result, `{"status": "FAILURE", "action": "MOVE"`+", file: "+file.Name()+"}")
+			log.Println("SKIPPING")
 			continue
 		}
 
@@ -82,17 +81,16 @@ func CheckRundowns(path string, files []os.FileInfo) []string {
 
 		if err != nil {
 			log.Fatal(err)
+			log.Println("ERROR")
 		}
 
-		go func(i int) {
-			year, month, day, fileWeek := ParseRundownDate(fptr)
-			dirWeek, _ := strconv.Atoi(filepath.Base(path)[1:])
-			// [i, , year, month, day, fileWeek, path, file.Name()]
-			result = append(result, `{"status: "`+status[fileWeek == dirWeek]+`"data": {date:`+fmt.Sprint(year)+"-"+fmt.Sprint(month)+"-"+fmt.Sprint(day)+"-W"+fmt.Sprint(fileWeek)+`} }`)
-			sem <- struct{}{}
-		}(i)
-
+		// go func(i int) { }(i)
+		year, month, day, fileWeek := ParseRundown(fptr)
+		dirWeek, _ := strconv.Atoi(filepath.Base(path)[1:])
+		result = append(result, `{"status": "`+status[fileWeek == dirWeek]+`", "data": {"date": "`+fmt.Sprint(year)+"-"+fmt.Sprint(month)+"-"+fmt.Sprint(day)+`", "week": `+fmt.Sprint(fileWeek)+`, "file": "`+file.Name()+`"} }`)
+		sem <- struct{}{}
 		defer fptr.Close()
+
 	}
 
 	// sem.Wait(len(files)); // FIXME
