@@ -5,6 +5,7 @@ package main
 
 import (
 	"bufio"
+	"encoding/json"
 	"fmt"
 	"io"
 	"log"
@@ -18,6 +19,19 @@ import (
 	"golang.org/x/text/encoding/unicode"
 	"golang.org/x/text/transform"
 )
+
+type Data struct {
+	Date string `json:"date"`
+	Week string `json:"week"`
+	File string `json:"file"`
+}
+
+type Report struct {
+	Index  int    `json:"index"`
+	Status string `json:"status"`
+	Data   Data   `json:"data"`
+	// TODO (optional) Errors?
+}
 
 //----------------------------------------------------------------------------
 //  RUNDOWNS
@@ -51,7 +65,7 @@ func ParseRundown(handle io.Reader) (int, int, int, int) {
 	return year, month, day, week
 }
 
-func CheckRundowns(path string, files []os.FileInfo) []string {
+func ReportRundowns(path string, files []os.FileInfo) []string {
 
 	var result = make([]string, len(files))
 
@@ -81,15 +95,35 @@ func CheckRundowns(path string, files []os.FileInfo) []string {
 
 		if err != nil {
 			log.Fatal(err)
-			log.Println("ERROR")
 		}
 
-		// go func(i int) { }(i)
+		//go func(i int) {
 		year, month, day, fileWeek := ParseRundown(fptr)
 		dirWeek, _ := strconv.Atoi(filepath.Base(path)[1:])
-		result = append(result, `{"#": `+fmt.Sprint(i)+`", status": "`+status[fileWeek == dirWeek]+`", "data": {"date": "`+fmt.Sprint(year)+"-"+fmt.Sprint(month)+"-"+fmt.Sprint(day)+`", "week": `+fmt.Sprint(fileWeek)+`, "file": "`+file.Name()+`"} }`)
+
+		report := &Report{
+			Index:  i,
+			Status: (status[fileWeek == dirWeek]),
+			Data: Data{
+				Date: fmt.Sprint(year) + "-" + fmt.Sprint(month) + "-" + fmt.Sprint(day),
+				Week: fmt.Sprint(fileWeek),
+				File: file.Name(),
+			},
+		}
+
+		reportJsonLine, err := json.Marshal(report)
+
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		result = append(result, string(reportJsonLine))
+
+		fmt.Println(string(reportJsonLine)) // How to send this to another function (Python yield style)?
+
 		sem <- struct{}{}
 		defer fptr.Close()
+		// }(i)
 
 	}
 
@@ -98,7 +132,7 @@ func CheckRundowns(path string, files []os.FileInfo) []string {
 	return result
 }
 
-func PlaceRundows(actions []string) {
+func RepairRundows(actions []string) {
 	// Execute the commands stored in actions.
 }
 
@@ -106,19 +140,26 @@ func PlaceRundows(actions []string) {
 // CONTACTS (TODO)
 //----------------------------------------------------------------------------
 
-func parseContact(handle io.Reader) {
+func ParseContact(handle io.Reader) {
 
 	scanner := bufio.NewScanner(transform.NewReader(handle, unicode.UTF16(unicode.LittleEndian, unicode.UseBOM).NewDecoder()))
 
 	for scanner.Scan() {
-		// `"ContactContainerFieldID IsEmpty = "no"`
+		// TODO `"ContactContainerFieldID IsEmpty = "no"`
 	}
 
 	return
 }
 
-func CheckContacts(path string, files []os.FileInfo) []string {
+func ReportContacts(path string, files []os.FileInfo) []string {
 	var result = make([]string, len(files))
+
+	/* TODO */
+
 	return result
 
+}
+
+func RepairContacts(actions []string) {
+	// TODO Execute the commands stored in actions.
 }

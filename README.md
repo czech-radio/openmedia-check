@@ -50,23 +50,19 @@ The basic usage is as follows:
 
 ### Output
 
-Program works as batch and outputs result after all work is finished.
-We are working on continuous streaming.
-
 When it runs well, you should see something like this on the output:
 
 ```json
-{"#": 0", status": "SUCCESS", "data": {"date": "2022-11-4", "week": 44, "file": "RD_00-05_Radiožurnál_-_Fri__04_11_2022_2_13519620_20221105001439.xml"} }
-{"#": 1", status": "SUCCESS", "data": {"date": "2022-10-31", "week": 44, "file": "RD_00-05_Radiožurnál_-_Mon__31_10_2022_2_13467409_20221101001437.xml"} }
-{"#": 2", status": "SUCCESS", "data": {"date": "2022-11-6", "week": 44, "file": "RD_00-05_Radiožurnál_-_Neděle_06_11_2022_2_13547024_20221107001352.xml"} }
-{"#": 3", status": "SUCCESS", "data": {"date": "2022-11-5", "week": 44, "file": "RD_00-05_Radiožurnál_-_Sobota_05_11_2022_2_13537307_20221106001425.xml"} }
-{"#": 4", status": "SUCCESS", "data": {"date": "2022-11-1", "week": 44, "file": "RD_00-05_Radiožurnál_-_Tue__01_11_2022_2_13478904_20221102001422.xml"} }
-{"#": 5", status": "SUCCESS", "data": {"date": "2022-11-2", "week": 44, "file": "RD_00-05_Radiožurnál_-_Wed__02_11_2022_2_13493128_20221103001430.xml"} }
-{"#": 6", status": "SUCCESS", "data": {"date": "2022-11-3", "week": 44, "file": "RD_00-05_Radiožurnál_-__Čt_03_11_2022_2_13506313_20221104001434.xml"} }
-{"#": 7", status": "SUCCESS", "data": {"date": "2022-11-6", "week": 44, "file": "RD_00-05_ČRo_Region_SC_-_Neděle_06_11_2022_2_13546661_20221107001347.xml"} }
-{"#": 8", status": "SUCCESS", "data": {"date": "2022-10-31", "week": 44, "file": "RD_00-05_ČRo_Region_SC_-_Pondělí_31_10_2022_2_13467101_20221101001433.xml"} }
-{"#": 9", status": "SUCCESS", "data": {"date": "2022-11-4", "week": 44, "file": "RD_00-05_ČRo_Region_SC_-_Pátek_04_11_2022_2_13519355_20221105001432.xml"} }
-{"#": 10", status": "SUCCESS", "data": {"date": "2022-11-5", "week": 44, "file": "RD_00-05_ČRo_Region_SC_-_Sobota_05_11_2022_2_13537296_20221106001421.xml"} }
+{"index":0,"status":"SUCCESS","data":{"date":"2022-11-4","week":"44","file":"RD_00-05_Radiožurnál_-_Fri__04_11_2022_2_13519620_20221105001439.xml"}}
+{"index":1,"status":"SUCCESS","data":{"date":"2022-10-31","week":"44","file":"RD_00-05_Radiožurnál_-_Mon__31_10_2022_2_13467409_20221101001437.xml"}}
+{"index":2,"status":"SUCCESS","data":{"date":"2022-11-6","week":"44","file":"RD_00-05_Radiožurnál_-_Neděle_06_11_2022_2_13547024_20221107001352.xml"}}
+{"index":3,"status":"SUCCESS","data":{"date":"2022-11-5","week":"44","file":"RD_00-05_Radiožurnál_-_Sobota_05_11_2022_2_13537307_20221106001425.xml"}}
+{"index":4,"status":"SUCCESS","data":{"date":"2022-11-1","week":"44","file":"RD_00-05_Radiožurnál_-_Tue__01_11_2022_2_13478904_20221102001422.xml"}}
+{"index":5,"status":"SUCCESS","data":{"date":"2022-11-2","week":"44","file":"RD_00-05_Radiožurnál_-_Wed__02_11_2022_2_13493128_20221103001430.xml"}}
+{"index":6,"status":"SUCCESS","data":{"date":"2022-11-3","week":"44","file":"RD_00-05_Radiožurnál_-__Čt_03_11_2022_2_13506313_20221104001434.xml"}}
+{"index":7,"status":"SUCCESS","data":{"date":"2022-11-6","week":"44","file":"RD_00-05_ČRo_Region_SC_-_Neděle_06_11_2022_2_13546661_20221107001347.xml"}}
+{"index":8,"status":"SUCCESS","data":{"date":"2022-10-31","week":"44","file":"RD_00-05_ČRo_Region_SC_-_Pondělí_31_10_2022_2_13467101_20221101001433.xml"}}
+{"index":9,"status":"SUCCESS","data":{"date":"2022-11-4","week":"44","file":"RD_00-05_ČRo_Region_SC_-_Pátek_04_11_2022_2_13519355_20221105001432.xml"}}
 ```
 
 Each line is a JSON object and contains the following fields:
