@@ -40,7 +40,6 @@ func main() {
 		os.Exit(1)
 	}
 
-
 	if *OUTPUT != "" {
 		// Write to stdout
 	}

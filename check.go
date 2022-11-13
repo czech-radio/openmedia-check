@@ -44,7 +44,7 @@ func ParseRundown(handle io.Reader) (int, int, int, int) {
 
 			year, month, day = date.Year(), int(date.Month()), date.Day()
 			_, week = date.ISOWeek()
-			break; // Find first occurence!
+			break // Find first occurence!
 		}
 	}
 
@@ -87,7 +87,7 @@ func CheckRundowns(path string, files []os.FileInfo) []string {
 		// go func(i int) { }(i)
 		year, month, day, fileWeek := ParseRundown(fptr)
 		dirWeek, _ := strconv.Atoi(filepath.Base(path)[1:])
-		result = append(result, `{"status": "`+status[fileWeek == dirWeek]+`", "data": {"date": "`+fmt.Sprint(year)+"-"+fmt.Sprint(month)+"-"+fmt.Sprint(day)+`", "week": `+fmt.Sprint(fileWeek)+`, "file": "`+file.Name()+`"} }`)
+		result = append(result, `{"#": `+fmt.Sprint(i)+`", status": "`+status[fileWeek == dirWeek]+`", "data": {"date": "`+fmt.Sprint(year)+"-"+fmt.Sprint(month)+"-"+fmt.Sprint(day)+`", "week": `+fmt.Sprint(fileWeek)+`, "file": "`+file.Name()+`"} }`)
 		sem <- struct{}{}
 		defer fptr.Close()
 
