@@ -31,21 +31,19 @@
 
 ## Usage
 
-**Prerequisites**
-
+This program can operate only on *week* directores i.e. `W01`-`W52(3)`!
 The OpenMedia export folder must accessible (should mounted if you are on Linux mahine).
 We often refer to this path via environment variable `$env:ANNOVA` e.g `$env:ANNOA\Rundowns\2022\W01`
 
-This program can operate only on *week* directores i.e. `W01`-`W52(3)`!
-
+The basic usage is as follows:
 
 ```bash
-./openmedia-check -i "$ANNOVA/Rundowns/2022/W01 $ANNOVA/Rundowns/2022/W02" [-o <output_name>] [-w] [-c]
+./openmedia-check -i "$ANNOVA/path/to/rundowns/2022/W01 $ANNOVA/path/to/contacts/2022/W02"
 ```
 
 ### Flags
 
-- `-i` - The input folder ending with `WXX` or multiple input folders in doublequotes e.g. `"/path/to/rundowns/2022/W01 /path/to/rundowns/2022/W02"`
+- `-i` - The input folder or multiple input folders e.g. `"/path/to/rundowns/2022/W01 /path/to/contacts/2022/W02"`
 - `-o` - The output log name (default `openmedia.log`)
 - `-c` - Check contact counts in files.
 - `-w` - Write changes to file system.
