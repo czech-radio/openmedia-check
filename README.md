@@ -2,7 +2,7 @@
 
 [![build](https://github.com/czech-radio/openmedia-check/actions/workflows/main.yml/badge.svg)](https://github.com/czech-radio/openmedia-check/actions/workflows/main.yml)
 
-**The program finds wrongly organized OpenMedia rundown files within the given directory.**
+**The program reports and possibly moves incorrectly organized exported Open Media rundonws and contacts.**
 
 ## Features
 
