@@ -47,7 +47,7 @@ func ParseRundown(handle io.Reader) (int, int, int, int) {
 		var line = fmt.Sprintln(scanner.Text())
 
 		if strings.Contains(line, `FieldID = "1004"`) {
-			reg := regexp.MustCompile("(202[0-9]{1})([0-9]{2})([0-9]{2})(T)")
+			reg := regexp.MustCompile("([0-9][0-9][0-9][0-9]{1})([0-9]{2})([0-9]{2})(T)")
 			res := reg.FindStringSubmatch(line)
 
 			date, err := time.Parse("20060102", res[1]+res[2]+res[3])
@@ -57,7 +57,7 @@ func ParseRundown(handle io.Reader) (int, int, int, int) {
 			}
 
 			year, month, day = date.Year(), int(date.Month()), date.Day()
-			_, week = date.ISOWeek()
+			year, week = date.ISOWeek()
 			break // Find first occurence!
 		}
 	}
@@ -105,7 +105,7 @@ func ReportRundowns(path string, files []os.FileInfo) []string {
 			Index:  i,
 			Status: (status[fileWeek == dirWeek]),
 			Data: Data{
-				Date: fmt.Sprint(year) + "-" + fmt.Sprint(month) + "-" + fmt.Sprint(day),
+				Date: fmt.Sprintf("%04d-%02d-%02d", year, month, day),
 				Week: fmt.Sprint(fileWeek),
 				File: file.Name(),
 			},

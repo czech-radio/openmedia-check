@@ -4,11 +4,13 @@
 BINARY_NAME=openmedia-check
 
 fmt:
-	go fmt .
+	go fmt
 deps:
 	go mod tidy
+vet:
+	go vet
 clean:
-	go clean
+	go clean vet
 	rm ./${BINARY_NAME}
 
 build: deps
