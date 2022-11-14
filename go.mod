@@ -1,4 +1,4 @@
-module openmedia_files_checker
+module github.com/czech-radio/openmedia-check
 
 go 1.19
 
