@@ -65,14 +65,14 @@ When it runs well, you should see something like this on the output:
 {"index":9,"status":"SUCCESS","data":{"date":"2022-11-4","week":"44","file":"RD_00-05_ČRo_Region_SC_-_Pátek_04_11_2022_2_13519355_20221105001432.xml"}}
 ```
 
-Each line is a JSON object and contains the following fields:
+The each line is a valid JSON object and contains the following fields:
 
-- `#` - Sequential batch item index.
-- `date` - Timestamp of when it occurs.
-- `level` - Can be either `info`, `error` or `warning`.
-- `status` - Can be either `0` - info, `1` - error, `2` - warning.
-- `message` - Human readable status message.
-
+- `index` - Sequential batch item index.
+- `data`
+  - `date` - Rundown file schedule date.  
+  - `level` - Can be either `info`, `error` or `warning`.
+  - `status` - Can be either `0` - info, `1` - error, `2` - warning.
+  - `message` - Human readable status message.
 
 ## Contribution
 
