@@ -2,7 +2,7 @@
 
 [![build](https://github.com/czech-radio/openmedia-check/actions/workflows/main.yml/badge.svg)](https://github.com/czech-radio/openmedia-check/actions/workflows/main.yml)
 
-**The program reports and possibly moves incorrectly organized exported OpenMedia rundonws and contacts.**
+**The program reports and possibly correct incorrectly organized OpenMedia rundonws and contacts.**
 
 ## Features
 
