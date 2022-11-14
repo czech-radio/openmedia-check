@@ -20,12 +20,14 @@ import (
 	"golang.org/x/text/transform"
 )
 
+//Data holds Date, Week and File strings
 type Data struct {
 	Date string `json:"date"`
 	Week string `json:"week"`
 	File string `json:"file"`
 }
 
+//Report holds Index, Status strings and Data struct
 type Report struct {
 	Index  int    `json:"index"`
 	Status string `json:"status"`
@@ -37,6 +39,7 @@ type Report struct {
 //  RUNDOWNS
 //----------------------------------------------------------------------------
 
+// ParseRundown seeks openmedia xml file and returns year, month, day, week which is exctracted from occurance of an xml element "1004"
 func ParseRundown(handle io.Reader) (int, int, int, int) {
 
 	var year, month, day, week = 0, 0, 0, 0
@@ -65,6 +68,7 @@ func ParseRundown(handle io.Reader) (int, int, int, int) {
 	return year, month, day, week
 }
 
+// ReportRundowns marks inputs path and files and outputs data report string splice.
 func ReportRundowns(path string, files []os.FileInfo) []string {
 
 	var result = make([]string, len(files))
@@ -111,15 +115,15 @@ func ReportRundowns(path string, files []os.FileInfo) []string {
 			},
 		}
 
-		reportJsonLine, err := json.Marshal(report)
+		reportJSONLine, err := json.Marshal(report)
 
 		if err != nil {
 			log.Fatal(err)
 		}
 
-		result = append(result, string(reportJsonLine))
+		result = append(result, string(reportJSONLine))
 
-		fmt.Println(string(reportJsonLine)) // How to send this to another function (Python yield style)?
+		fmt.Println(string(reportJSONLine)) // How to send this to another function (Python yield style)?
 
 		sem <- struct{}{}
 		defer fptr.Close()
@@ -132,6 +136,7 @@ func ReportRundowns(path string, files []os.FileInfo) []string {
 	return result
 }
 
+// RepairRundows (unimplemented) do filechanges to files on disk.
 func RepairRundows(actions []string) {
 	// Execute the commands stored in actions.
 }
@@ -140,17 +145,20 @@ func RepairRundows(actions []string) {
 // CONTACTS (TODO)
 //----------------------------------------------------------------------------
 
-func ParseContact(handle io.Reader) {
+// ParseContact get io.Reader handler and do open media contact counts.
+func ParseContact(handle io.Reader) int {
 
 	scanner := bufio.NewScanner(transform.NewReader(handle, unicode.UTF16(unicode.LittleEndian, unicode.UseBOM).NewDecoder()))
 
+        var count int = 0
 	for scanner.Scan() {
 		// TODO `"ContactContainerFieldID IsEmpty = "no"`
 	}
 
-	return
+	return count
 }
 
+// ReportContacts makes openmedia contacts count and outputs slice of ... (unimplemented) 
 func ReportContacts(path string, files []os.FileInfo) []string {
 	var result = make([]string, len(files))
 
@@ -160,6 +168,8 @@ func ReportContacts(path string, files []os.FileInfo) []string {
 
 }
 
+// RepairContacts fixes ... (unimplemented)
 func RepairContacts(actions []string) {
 	// TODO Execute the commands stored in actions.
 }
+
