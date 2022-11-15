@@ -75,7 +75,7 @@ func ReportRundowns(path string, files []os.FileInfo) []string {
 
 	status := (map[bool]string{true: "SUCCESS", false: "FAILURE"})
 
-	sem := make(chan struct{}, len(files))
+	//sem := make(chan struct{}, len(files))
 
 	for i, file := range files {
 
@@ -110,7 +110,7 @@ func ReportRundowns(path string, files []os.FileInfo) []string {
 			Status: (status[fileWeek == dirWeek]),
 			Data: Data{
 				Date: fmt.Sprintf("%04d-%02d-%02d", year, month, day),
-				Week: fmt.Sprint(fileWeek),
+				Week: fmt.Sprintf("W%02d",fileWeek),
 				File: file.Name(),
 			},
 		}
@@ -123,9 +123,9 @@ func ReportRundowns(path string, files []os.FileInfo) []string {
 
 		result = append(result, string(reportJSONLine))
 
-		fmt.Println(string(reportJSONLine)) // How to send this to another function (Python yield style)?
+		//fmt.Println(string(reportJSONLine)) // How to send this to another function (Python yield style)?
 
-		sem <- struct{}{}
+		//sem <- struct{}{}
 		defer fptr.Close()
 		// }(i)
 

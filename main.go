@@ -12,7 +12,7 @@ import (
 	"os"
 	"strings"
 )
-
+// VERSION of a program
 const VERSION = "0.2.0"
 
 func isFlagPassed(name string) bool {
@@ -30,8 +30,8 @@ func main() {
 	INPUTS := flag.String("i", "", "The input directories.")
 	OUTPUT := flag.String("o", "", "The output file name.")
 
-	SHOULD_WRITE_CHANGES := flag.Bool("w", false, "Should write changes?")
-	SHOULD_CHECK_CONTACTS := flag.Bool("c", false, "Should count contacts?")
+	ShouldWriteChanges := flag.Bool("w", false, "Should write changes?")
+	ShouldCheckContacts := flag.Bool("c", false, "Should count contacts?")
 
 	flag.Parse()
 
@@ -45,11 +45,11 @@ func main() {
 	}
 
 	if isFlagPassed("w") {
-		*SHOULD_WRITE_CHANGES = true
+		*ShouldWriteChanges = true
 	}
 
 	if isFlagPassed("c") {
-		*SHOULD_CHECK_CONTACTS = true
+		*ShouldCheckContacts = true
 	}
 
 	flag.Usage = func() {
@@ -68,7 +68,6 @@ func main() {
 		}
 
 		actions = append(actions, ReportRundowns(folder, files))
-
 	}
 
 	// FIXME: How tp print continuously and not as batch?
