@@ -81,7 +81,7 @@ func ReportRundowns(path string, files []os.FileInfo) []string {
 
 		// File shoud be moved because it is a directory.
 		if file.IsDir() {
-			result = append(result, `{"status": "FAILURE", "action": "MOVE"`+", file: "+file.Name()+"}")
+                  result = append(result, `{"Index": `+fmt.Sprint(i)+`,"Status": "FAILURE", "Action": "SKIP"`+", File: "+file.Name()+"}")
 			log.Println("SKIPPING")
 			continue
 		}
@@ -90,7 +90,7 @@ func ReportRundowns(path string, files []os.FileInfo) []string {
 
 		// File shoud be moved because is has wrong file extension.
 		if fext != ".xml" {
-			result = append(result, `{"status": "FAILURE", "action": "MOVE"`+", file: "+file.Name()+"}")
+                        result = append(result, `{"Index": `+fmt.Sprint(i)+`,"Status": "FAILURE", "Action": "SKIP"`+", File: "+file.Name()+"}")
 			log.Println("SKIPPING")
 			continue
 		}
@@ -101,7 +101,6 @@ func ReportRundowns(path string, files []os.FileInfo) []string {
 			log.Fatal(err)
 		}
 
-		//go func(i int) {
 		year, month, day, fileWeek := ParseRundown(fptr)
 		dirWeek, _ := strconv.Atoi(filepath.Base(path)[1:])
 
@@ -123,7 +122,7 @@ func ReportRundowns(path string, files []os.FileInfo) []string {
 
 		result = append(result, string(reportJSONLine))
 
-		//fmt.Println(string(reportJSONLine)) // How to send this to another function (Python yield style)?
+		fmt.Println(string(reportJSONLine)) // How to send this to another function (Python yield style)?
 
 		//sem <- struct{}{}
 		defer fptr.Close()
@@ -172,4 +171,3 @@ func ReportContacts(path string, files []os.FileInfo) []string {
 func RepairContacts(actions []string) {
 	// TODO Execute the commands stored in actions.
 }
-
