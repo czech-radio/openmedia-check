@@ -75,7 +75,7 @@ func ReportRundowns(path string, files []os.FileInfo) []string {
 
 	status := (map[bool]string{true: "SUCCESS", false: "FAILURE"})
 
-	//sem := make(chan struct{}, len(files))
+	//ch := make(chan struct{}, len(files))
 
 	for i, file := range files {
 
@@ -124,16 +124,13 @@ func ReportRundowns(path string, files []os.FileInfo) []string {
 
 		fmt.Println(string(reportJSONLine)) // How to send this to another function (Python yield style)?
 
-		//sem <- struct{}{}
 		defer fptr.Close()
-		// }(i)
 
 	}
 
-	// sem.Wait(len(files)); // FIXME
-
 	return result
 }
+
 
 // RepairRundows (unimplemented) do filechanges to files on disk.
 func RepairRundows(actions []string) {

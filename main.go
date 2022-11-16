@@ -67,13 +67,6 @@ func main() {
 			log.Fatal(err)
 		}
 
-		actions = append(actions, ReportRundowns(folder, files))
+                actions = append(actions, ReportRundowns(folder, files))
 	}
-
-	// FIXME: How tp print continuously and not as batch?
-	// for _, action := range actions {
-	// 	for _, item := range action {
-	// 		fmt.Println(item)
-	// 	}
-	// }
 }
