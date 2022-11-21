@@ -20,14 +20,14 @@ import (
 	"golang.org/x/text/transform"
 )
 
-//Data holds Date, Week and File strings
+// Data holds Date, Week and File strings
 type Data struct {
 	Date string `json:"date"`
 	Week string `json:"week"`
 	File string `json:"file"`
 }
 
-//Report holds Index, Status strings and Data struct
+// Report holds Index, Status strings and Data struct
 type Report struct {
 	Index  int    `json:"index"`
 	Status string `json:"status"`
@@ -81,8 +81,7 @@ func ReportRundowns(path string, files []os.FileInfo) []string {
 
 		// File shoud be moved because it is a directory.
 		if file.IsDir() {
-                  result = append(result, `{"Index": `+fmt.Sprint(i)+`,"Status": "FAILURE", "Action": "SKIP"`+", File: "+file.Name()+"}")
-			log.Println("SKIPPING")
+			result = append(result, `{"Index": `+fmt.Sprint(i)+`,"Status": "FAILURE", "Action": "SKIP"`+", File: "+file.Name()+"}")
 			continue
 		}
 
@@ -90,8 +89,7 @@ func ReportRundowns(path string, files []os.FileInfo) []string {
 
 		// File shoud be moved because is has wrong file extension.
 		if fext != ".xml" {
-                        result = append(result, `{"Index": `+fmt.Sprint(i)+`,"Status": "FAILURE", "Action": "SKIP"`+", File: "+file.Name()+"}")
-			log.Println("SKIPPING")
+			result = append(result, `{"Index": `+fmt.Sprint(i)+`,"Status": "FAILURE", "Action": "SKIP"`+", File: "+file.Name()+"}")
 			continue
 		}
 
@@ -109,7 +107,7 @@ func ReportRundowns(path string, files []os.FileInfo) []string {
 			Status: (status[fileWeek == dirWeek]),
 			Data: Data{
 				Date: fmt.Sprintf("%04d-%02d-%02d", year, month, day),
-				Week: fmt.Sprintf("W%02d",fileWeek),
+				Week: fmt.Sprintf("W%02d", fileWeek),
 				File: file.Name(),
 			},
 		}
@@ -131,10 +129,14 @@ func ReportRundowns(path string, files []os.FileInfo) []string {
 	return result
 }
 
-
 // RepairRundows (unimplemented) do filechanges to files on disk.
 func RepairRundows(actions []string) {
 	// Execute the commands stored in actions.
+	for _, action := range actions {
+		if strings.Contains(action, "FAILURE") && ShouldWriteChanges {
+			//move function here
+		}
+	}
 }
 
 //----------------------------------------------------------------------------
@@ -146,7 +148,7 @@ func ParseContact(handle io.Reader) int {
 
 	scanner := bufio.NewScanner(transform.NewReader(handle, unicode.UTF16(unicode.LittleEndian, unicode.UseBOM).NewDecoder()))
 
-        var count int = 0
+	var count int = 0
 	for scanner.Scan() {
 		// TODO `"ContactContainerFieldID IsEmpty = "no"`
 	}
@@ -154,7 +156,7 @@ func ParseContact(handle io.Reader) int {
 	return count
 }
 
-// ReportContacts makes openmedia contacts count and outputs slice of ... (unimplemented) 
+// ReportContacts makes openmedia contacts count and outputs slice of ... (unimplemented)
 func ReportContacts(path string, files []os.FileInfo) []string {
 	var result = make([]string, len(files))
 

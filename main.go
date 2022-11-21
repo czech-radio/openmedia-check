@@ -12,8 +12,15 @@ import (
 	"os"
 	"strings"
 )
+
 // VERSION of a program
 const VERSION = "0.2.0"
+
+// ShouldWriteChanges is a switch to write changes on disk or not true : false.
+var ShouldWriteChanges bool
+
+// ShouldCheckContacts is a switch to check contacts in file or not, true : false.
+var ShouldCheckContacts bool
 
 func isFlagPassed(name string) bool {
 	found := false
@@ -67,6 +74,6 @@ func main() {
 			log.Fatal(err)
 		}
 
-                actions = append(actions, ReportRundowns(folder, files))
+		actions = append(actions, ReportRundowns(folder, files))
 	}
 }
