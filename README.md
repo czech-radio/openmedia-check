@@ -4,6 +4,8 @@
 
 **The program reports and possibly relocates incorrectly organized OpenMedia rundowns and contacts.**
 
+**Disclaimer:** Although we developed this package as an open-source, we use it internally to work with a specific XML file exported from the OpenMedia broadcast system. Feel free to read the source code.
+
 ## Features
 
 - Reports wrongly placed files.
