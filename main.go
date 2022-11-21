@@ -64,7 +64,7 @@ func main() {
 		fmt.Println(`./openmedia-check -i "<path> [path...]" [-o <file_name>] [-c] [-w]`)
 	}
 
-	var actions [][]string
+	var actions [][]Message
 
 	for _, folder := range strings.Split(*INPUTS, " ") {
 

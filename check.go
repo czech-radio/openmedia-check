@@ -27,10 +27,11 @@ type Data struct {
 	File string `json:"file"`
 }
 
-// Report holds Index, Status strings and Data struct
-type Report struct {
+// Message holds Index, Status strings and Data struct.
+type Message struct {
 	Index  int    `json:"index"`
 	Status string `json:"status"`
+	Action string `json:"action"`
 	Data   Data   `json:"data"`
 	// TODO (optional) Errors?
 }
@@ -39,7 +40,7 @@ type Report struct {
 //  RUNDOWNS
 //----------------------------------------------------------------------------
 
-// ParseRundown seeks openmedia xml file and returns year, month, day, week which is exctracted from occurance of an xml element "1004"
+// ParseRundown seeks openmedia xml file and returns year, month, day, week
 func ParseRundown(handle io.Reader) (int, int, int, int) {
 
 	var year, month, day, week = 0, 0, 0, 0
@@ -61,35 +62,27 @@ func ParseRundown(handle io.Reader) (int, int, int, int) {
 
 			year, month, day = date.Year(), int(date.Month()), date.Day()
 			year, week = date.ISOWeek()
-			break // Find first occurence!
+			break // Find first ocurrance!
 		}
 	}
 
 	return year, month, day, week
 }
 
-// ReportRundowns marks inputs path and files and outputs data report string splice.
-func ReportRundowns(path string, files []os.FileInfo) []string {
+// ReportRundowns marks inputs path and files and outputs data report.
+func ReportRundowns(path string, files []os.FileInfo) []Message {
 
-	var result = make([]string, len(files))
+	var result = make([]Message, len(files))
 
 	status := (map[bool]string{true: "SUCCESS", false: "FAILURE"})
-
-	//ch := make(chan struct{}, len(files))
+	actions := (map[int]string{0: "none", 1: "mv", 2: "rm"})
 
 	for i, file := range files {
 
-		// File shoud be moved because it is a directory.
-		if file.IsDir() {
-			result = append(result, `{"Index": `+fmt.Sprint(i)+`,"Status": "FAILURE", "Action": "SKIP"`+", File: "+file.Name()+"}")
-			continue
-		}
-
 		fext := filepath.Ext(file.Name())
 
-		// File shoud be moved because is has wrong file extension.
-		if fext != ".xml" {
-			result = append(result, `{"Index": `+fmt.Sprint(i)+`,"Status": "FAILURE", "Action": "SKIP"`+", File: "+file.Name()+"}")
+		// File should be skipped because it is a directory or has wrong filename.
+		if file.IsDir() || fext != ".xml" {
 			continue
 		}
 
@@ -99,12 +92,15 @@ func ReportRundowns(path string, files []os.FileInfo) []string {
 			log.Fatal(err)
 		}
 
+		defer fptr.Close()
+
 		year, month, day, fileWeek := ParseRundown(fptr)
 		dirWeek, _ := strconv.Atoi(filepath.Base(path)[1:])
 
-		report := &Report{
+		message := &Message{
 			Index:  i,
 			Status: (status[fileWeek == dirWeek]),
+			Action: actions[1],
 			Data: Data{
 				Date: fmt.Sprintf("%04d-%02d-%02d", year, month, day),
 				Week: fmt.Sprintf("W%02d", fileWeek),
@@ -112,28 +108,32 @@ func ReportRundowns(path string, files []os.FileInfo) []string {
 			},
 		}
 
-		reportJSONLine, err := json.Marshal(report)
+		result = append(result, *message)
 
-		if err != nil {
-			log.Fatal(err)
-		}
-
-		result = append(result, string(reportJSONLine))
-
-		fmt.Println(string(reportJSONLine)) // How to send this to another function (Python yield style)?
-
-		defer fptr.Close()
+		FormatMessage(*message)
 
 	}
 
 	return result
 }
 
+// FormatMessage formats Message to JSON.
+func FormatMessage(report Message) string {
+	reportJSONLine, err := json.Marshal(report)
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	fmt.Println(string(reportJSONLine)) // How to send this to another function (Python yield style)?
+	return string(reportJSONLine)
+}
+
 // RepairRundows (unimplemented) do filechanges to files on disk.
-func RepairRundows(actions []string) {
+func RepairRundows(actions []Message) {
 	// Execute the commands stored in actions.
 	for _, action := range actions {
-		if strings.Contains(action, "FAILURE") && ShouldWriteChanges {
+		if action.Action == "mv" && ShouldWriteChanges {
 			//move function here
 		}
 	}
