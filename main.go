@@ -39,13 +39,9 @@ func isFlagPassed(name string) bool {
 func main() {
 
 	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Error loading .env file")
-	}
-
-	Annova := os.Getenv("annova")
-	if Annova == "" {
-		log.Fatal("System has no variable $annova")
+	Annova := os.Getenv("ANNOVA")
+	if Annova == "" && err != nil {
+		log.Fatal("System has no variable $ANNOVA neither proper .env file is present.")
 	}
 
 	INPUTS := flag.String("i", "", "The input directories.")
