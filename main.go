@@ -7,6 +7,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"github.com/joho/godotenv"
 	"io/ioutil"
 	"log"
 	"os"
@@ -22,6 +23,9 @@ var ShouldWriteChanges bool
 // ShouldCheckContacts is a switch to check contacts in file or not, true : false.
 var ShouldCheckContacts bool
 
+// Annova is SYSVAR pointing to Openmedia root folder path
+var Annova string
+
 func isFlagPassed(name string) bool {
 	found := false
 	flag.Visit(func(f *flag.Flag) {
@@ -33,6 +37,16 @@ func isFlagPassed(name string) bool {
 }
 
 func main() {
+
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
+
+	Annova := os.Getenv("annova")
+	if Annova == "" {
+		log.Fatal("System has no variable $annova")
+	}
 
 	INPUTS := flag.String("i", "", "The input directories.")
 	OUTPUT := flag.String("o", "", "The output file name.")

@@ -84,8 +84,7 @@ func ReportRundowns(path string, files []os.FileInfo) []Message {
 
 		// File should be skipped because it is a directory or has wrong filename.
 		if file.IsDir() || fext != ".xml" {
-			actionNo = 0
-			continue
+			continue // should it be logged, or other action executed?
 		}
 
 		fptr, err := os.Open(filepath.Join(path, file.Name()))
@@ -142,7 +141,8 @@ func RepairRundows(actions []Message) {
 	// Execute the commands stored in actions.
 	for _, action := range actions {
 		if action.Action == "mv" && ShouldWriteChanges {
-			//move function here
+			//move function here using Annova var to create folders and move files
+
 		}
 	}
 }
