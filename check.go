@@ -40,8 +40,8 @@ type Message struct {
 //  RUNDOWNS
 //----------------------------------------------------------------------------
 
-// ParseRundown seeks openmedia xml file and returns year, month, day, week
-func ParseRundown(handle io.Reader) (int, int, int, int) {
+// ParseRundown parses openmedia file and returns date.
+func ParseRundown(handle io.Reader) (Year, Month, Day, Week int) {
 
 	var year, month, day, week = 0, 0, 0, 0
 
@@ -69,13 +69,14 @@ func ParseRundown(handle io.Reader) (int, int, int, int) {
 	return year, month, day, week
 }
 
-// ReportRundowns marks inputs path and files and outputs data report.
+// ReportRundowns takes path and filelist and outputs Message report.
 func ReportRundowns(path string, files []os.FileInfo) []Message {
 
 	var result = make([]Message, len(files))
 
 	status := (map[bool]string{true: "SUCCESS", false: "FAILURE"})
 	actions := (map[int]string{0: "none", 1: "mv", 2: "rm"})
+	var actionNo int
 
 	for i, file := range files {
 
@@ -83,6 +84,7 @@ func ReportRundowns(path string, files []os.FileInfo) []Message {
 
 		// File should be skipped because it is a directory or has wrong filename.
 		if file.IsDir() || fext != ".xml" {
+			actionNo = 0
 			continue
 		}
 
@@ -97,10 +99,16 @@ func ReportRundowns(path string, files []os.FileInfo) []Message {
 		year, month, day, fileWeek := ParseRundown(fptr)
 		dirWeek, _ := strconv.Atoi(filepath.Base(path)[1:])
 
+		if fileWeek == dirWeek {
+			actionNo = 0
+		} else if fileWeek != dirWeek {
+			actionNo = 1
+		}
+
 		message := &Message{
 			Index:  i,
 			Status: (status[fileWeek == dirWeek]),
-			Action: actions[1],
+			Action: actions[actionNo],
 			Data: Data{
 				Date: fmt.Sprintf("%04d-%02d-%02d", year, month, day),
 				Week: fmt.Sprintf("W%02d", fileWeek),
