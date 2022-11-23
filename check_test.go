@@ -24,6 +24,7 @@ func TestMemoryFile(t *testing.T) {
 }
 
 /*
+// TODO: reading memory file to io.Reader (mock it here)
 
 // here's a fake ReadFile method that matches the signature of ioutil.ReadFile
 func ReadFile() (io.Reader, error) {
