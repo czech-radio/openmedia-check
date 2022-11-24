@@ -52,6 +52,7 @@ func TestCreateMessage(t *testing.T) {
 			Date: fmt.Sprintf("%04d-%02d-%02d", 2022, 1, 1),
 			Week: fmt.Sprintf("W%02d", 1),
 			File: "testName.xml",
+			Dest: "data",
 		},
 	}
 

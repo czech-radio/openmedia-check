@@ -25,6 +25,7 @@ type Data struct {
 	Date string `json:"date"`
 	Week string `json:"week"`
 	File string `json:"file"`
+	Dest string `json:"dest"`
 }
 
 // Message holds Index, Status strings and Data struct.
@@ -70,7 +71,7 @@ func ParseRundown(handle io.Reader) (Year, Month, Day, Week int) {
 }
 
 // ReportRundowns takes path and filelist and outputs Message report.
-func ReportRundowns(path string, files []os.FileInfo) []Message {
+func ReportRundowns(annova string, path string, files []os.FileInfo) []Message {
 
 	var result = make([]Message, len(files))
 
@@ -111,7 +112,8 @@ func ReportRundowns(path string, files []os.FileInfo) []Message {
 			Data: Data{
 				Date: fmt.Sprintf("%04d-%02d-%02d", year, month, day),
 				Week: fmt.Sprintf("W%02d", fileWeek),
-				File: file.Name(),
+				File: fmt.Sprintf("%s",filepath.Join(path,file.Name())),
+				Dest: fmt.Sprintf(filepath.Join(fmt.Sprintf("%s", annova), fmt.Sprintf("%04d", year), fmt.Sprintf("W%02d", fileWeek))),
 			},
 		}
 

@@ -23,8 +23,8 @@ var ShouldWriteChanges bool
 // ShouldCheckContacts is a switch to check contacts in file or not, true : false.
 var ShouldCheckContacts bool
 
-// Annova is SYSVAR pointing to Openmedia root folder path
-var Annova string
+// ANNOVA is SYSVAR pointing to Openmedia root folder path
+var ANNOVA string
 
 func isFlagPassed(name string) bool {
 	found := false
@@ -38,10 +38,13 @@ func isFlagPassed(name string) bool {
 
 func main() {
 
-	err := godotenv.Load()
-	Annova := os.Getenv("ANNOVA")
-	if Annova == "" && err != nil {
-		log.Fatal("System has no variable $ANNOVA neither proper .env file is present.")
+	ANNOVA := os.Getenv("ANNOVA")
+
+	if ANNOVA == "" {
+		err := godotenv.Load()
+		if err != nil {
+			log.Fatal("System has no variable $ANNOVA neither proper .env file is present.")
+		}
 	}
 
 	INPUTS := flag.String("i", "", "The input directories.")
@@ -84,6 +87,6 @@ func main() {
 			log.Fatal(err)
 		}
 
-		actions = append(actions, ReportRundowns(folder, files))
+		actions = append(actions, ReportRundowns(ANNOVA, folder, files))
 	}
 }
