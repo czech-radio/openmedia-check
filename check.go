@@ -113,7 +113,7 @@ func ReportRundowns(annova string, path string, files []os.FileInfo) []Message {
 			Data: Data{
 				Date: fmt.Sprintf("%04d-%02d-%02d", year, month, day),
 				Week: fmt.Sprintf("W%02d", fileWeek),
-				File: fmt.Sprintf("%s",filepath.Join(path,file.Name())),
+				File: fmt.Sprintf("%s", filepath.Join(path, file.Name())),
 				Dest: fmt.Sprintf(filepath.Join(fmt.Sprintf("%s", annova), fmt.Sprintf("%04d", year), fmt.Sprintf("W%02d", fileWeek))),
 			},
 		}
@@ -144,22 +144,22 @@ func RepairRundows(actions []Message, shouldWriteChanges bool) {
 	// Execute the commands stored in actions.
 	for _, action := range actions {
 		if action.Action == "mv" && shouldWriteChanges {
-			
-                        //check whatever dest directory exists, if not create it
-                        _, err := os.Stat(action.Data.Dest)
-                        if os.IsNotExist(err) {
-                            err := os.Mkdir(action.Data.Dest,0775)
-                            if err !=nil {
-                              log.Fatal(err)
-                            }
-                        }
 
-                        // move file to 
-                        _, filename := filepath.Split(action.Data.File)
-                        e := os.Rename(action.Data.File, path.Join(action.Data.Dest,filename))
-                        if e != nil {
-                            log.Fatal(e)
-                        }
+			//check whatever dest directory exists, if not create it
+			_, err := os.Stat(action.Data.Dest)
+			if os.IsNotExist(err) {
+				err := os.Mkdir(action.Data.Dest, 0775)
+				if err != nil {
+					log.Fatal(err)
+				}
+			}
+
+			// move file to
+			_, filename := filepath.Split(action.Data.File)
+			e := os.Rename(action.Data.File, path.Join(action.Data.Dest, filename))
+			if e != nil {
+				log.Fatal(e)
+			}
 		}
 	}
 }

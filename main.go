@@ -90,8 +90,8 @@ func main() {
 		actions = append(actions, ReportRundowns(ANNOVA, folder, files))
 	}
 
-        // apply changes here
-        for _, messages := range actions {
-              RepairRundows(messages,*ShouldWriteChanges)
-        }
+	// apply changes here
+	for _, messages := range actions {
+		RepairRundows(messages, *ShouldWriteChanges)
+	}
 }
