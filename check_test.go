@@ -22,18 +22,17 @@ func TestMemoryFile(t *testing.T) {
 	t.Log(len(string(fileHandle)))
 }
 
-
 // helper function
-func ReadFile() (io.Reader) {
-    var r io.Reader
-    r = strings.NewReader(string(mockData))
-    return r
+func ReadFile() io.Reader {
+	var r io.Reader
+	r = strings.NewReader(string(mockData))
+	return r
 }
 
 // test parsing mockData
-func TestParseRundown(t *testing.T){
-  year, month, day, week := ParseRundown(ReadFile())
-  t.Logf("%v %v %v %v",year, month, day, week)
+func TestParseRundown(t *testing.T) {
+	year, month, day, week := ParseRundown(ReadFile())
+	t.Logf("%v %v %v %v", year, month, day, week)
 }
 
 // Test that Message struct is created
