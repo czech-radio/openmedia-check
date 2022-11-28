@@ -35,12 +35,21 @@
 
 This program can operate only on *week* directores i.e. `W01`-`W52(3)`!
 The OpenMedia export folder must accessible (should mounted if you are on Linux mahine).
-We often refer to this path via environment variable `$env:ANNOVA` e.g `$env:ANNOA\Rundowns\2022\W01`
+
+Program needs `$ANNOVA` system variable and/or `.env` file which contains such variable to be filled in before run.
+`$ANNOVA` should be the path of data repository root folder, the one holding sub-folders named `Contacts`, `Rundowns`.
+```bash
+export ANNOVA=/mnt/cro.cz/
+
+```
+
+If it is all set well, you can scan any system directory containing rundown files, for its stats disk operations.
+
 
 The basic usage is as follows:
 
 ```bash
-./openmedia-check -i "$ANNOVA/path/to/rundowns/2022/W01 $ANNOVA/path/to/contacts/2022/W02"
+./openmedia-check -i "path/to/rundowns/2022/W01 path/to/contacts/2022/W02"
 ```
 
 ### Flags
@@ -70,11 +79,13 @@ When it runs well, you should see something like this on the output:
 The each line is a valid JSON object and contains the following fields:
 
 - `index` - Sequential batch item index.
+- `status` - either "SUCCESS" or "FAILURE"
+- `action` - either "none", "mv", "rm"
 - `data`
   - `date` - Rundown file schedule date.  
-  - `level` - Can be either `info`, `error` or `warning`.
-  - `status` - Can be either `0` - info, `1` - error, `2` - warning.
-  - `message` - Human readable status message.
+  - `week` - String representing detected week-number i.e.: `W23`.
+  - `file` - Path to a source file
+  - `dest` - Path to destination folder (where the file should be)
 
 ## Contribution
 
