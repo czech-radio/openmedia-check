@@ -32,7 +32,9 @@ func ReadFile() io.Reader {
 // test parsing mockData
 func TestParseRundown(t *testing.T) {
 	year, month, day, week := ParseRundown(ReadFile())
-	t.Logf("%v %v %v %v", year, month, day, week)
+	
+        // returns 0,0,0,0 due to utf-16 reader object (probably)
+        t.Logf("%v %v %v %v", year, month, day, week)
 }
 
 // Test that Message struct is created
