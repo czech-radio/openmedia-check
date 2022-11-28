@@ -114,7 +114,7 @@ func ReportRundowns(annova string, path string, files []os.FileInfo) []Message {
 				Date: fmt.Sprintf("%04d-%02d-%02d", year, month, day),
 				Week: fmt.Sprintf("W%02d", fileWeek),
 				File: fmt.Sprintf("%s", filepath.Join(path, file.Name())),
-				Dest: fmt.Sprintf(filepath.Join(fmt.Sprintf("%s", annova), fmt.Sprintf("%04d", year), fmt.Sprintf("W%02d", fileWeek))),
+				Dest: fmt.Sprintf(filepath.Join(fmt.Sprintf("%s", annova), "Rundowns", fmt.Sprintf("%04d", year), fmt.Sprintf("W%02d", fileWeek))),
 			},
 		}
 
