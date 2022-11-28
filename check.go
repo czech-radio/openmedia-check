@@ -10,6 +10,7 @@ import (
 	"io"
 	"log"
 	"os"
+	"path"
 	"path/filepath"
 	"regexp"
 	"strconv"
@@ -139,12 +140,26 @@ func FormatMessage(report Message) string {
 }
 
 // RepairRundows (unimplemented) do filechanges to files on disk.
-func RepairRundows(actions []Message) {
+func RepairRundows(actions []Message, shouldWriteChanges bool) {
 	// Execute the commands stored in actions.
 	for _, action := range actions {
-		if action.Action == "mv" && ShouldWriteChanges {
-			//move function here using Annova var to create folders and move files
+		if action.Action == "mv" && shouldWriteChanges {
+			
+                        //check whatever dest directory exists, if not create it
+                        _, err := os.Stat(action.Data.Dest)
+                        if os.IsNotExist(err) {
+                            err := os.Mkdir(action.Data.Dest,0775)
+                            if err !=nil {
+                              log.Fatal(err)
+                            }
+                        }
 
+                        // move file to 
+                        _, filename := filepath.Split(action.Data.File)
+                        e := os.Rename(action.Data.File, path.Join(action.Data.Dest,filename))
+                        if e != nil {
+                            log.Fatal(e)
+                        }
 		}
 	}
 }
