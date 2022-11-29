@@ -64,16 +64,13 @@ The basic usage is as follows:
 When it runs well, you should see something like this on the output:
 
 ```json
-{"index":0,"status":"SUCCESS","data":{"date":"2022-11-4","week":"44","file":"RD_00-05_Radiožurnál_-_Fri__04_11_2022_2_13519620_20221105001439.xml"}}
-{"index":1,"status":"SUCCESS","data":{"date":"2022-10-31","week":"44","file":"RD_00-05_Radiožurnál_-_Mon__31_10_2022_2_13467409_20221101001437.xml"}}
-{"index":2,"status":"SUCCESS","data":{"date":"2022-11-6","week":"44","file":"RD_00-05_Radiožurnál_-_Neděle_06_11_2022_2_13547024_20221107001352.xml"}}
-{"index":3,"status":"SUCCESS","data":{"date":"2022-11-5","week":"44","file":"RD_00-05_Radiožurnál_-_Sobota_05_11_2022_2_13537307_20221106001425.xml"}}
-{"index":4,"status":"SUCCESS","data":{"date":"2022-11-1","week":"44","file":"RD_00-05_Radiožurnál_-_Tue__01_11_2022_2_13478904_20221102001422.xml"}}
-{"index":5,"status":"SUCCESS","data":{"date":"2022-11-2","week":"44","file":"RD_00-05_Radiožurnál_-_Wed__02_11_2022_2_13493128_20221103001430.xml"}}
-{"index":6,"status":"SUCCESS","data":{"date":"2022-11-3","week":"44","file":"RD_00-05_Radiožurnál_-__Čt_03_11_2022_2_13506313_20221104001434.xml"}}
-{"index":7,"status":"SUCCESS","data":{"date":"2022-11-6","week":"44","file":"RD_00-05_ČRo_Region_SC_-_Neděle_06_11_2022_2_13546661_20221107001347.xml"}}
-{"index":8,"status":"SUCCESS","data":{"date":"2022-10-31","week":"44","file":"RD_00-05_ČRo_Region_SC_-_Pondělí_31_10_2022_2_13467101_20221101001433.xml"}}
-{"index":9,"status":"SUCCESS","data":{"date":"2022-11-4","week":"44","file":"RD_00-05_ČRo_Region_SC_-_Pátek_04_11_2022_2_13519355_20221105001432.xml"}}
+{"index":498,"status":"FAILURE","action":"mv","data":{"date":"2022-01-15","week":"W02","file":"data/Rundowns/2022/W01/RD_20-24_RŽ_Sport_-_Sobota_15_01_2022_2_9905892_20220115234504.xml","dest":"data/Rundowns/2022/W02"}}
+{"index":499,"status":"SUCCESS","action":"none","data":{"date":"2022-01-06","week":"W01","file":"data/Rundowns/2022/W01/RD_20-24_RŽ_Sport_-_Thu__06_01_2022_2_9802737_20220106234505.xml","dest":"data/Rundowns/2022/W01"}}
+{"index":500,"status":"FAILURE","action":"mv","data":{"date":"2022-01-13","week":"W02","file":"data/Rundowns/2022/W01/RD_20-24_RŽ_Sport_-_Thu__13_01_2022_2_9882830_20220113234503.xml","dest":"data/Rundowns/2022/W02"}}
+{"index":501,"status":"SUCCESS","action":"none","data":{"date":"2022-01-04","week":"W01","file":"data/Rundowns/2022/W01/RD_20-24_RŽ_Sport_-_Tue__04_01_2022_2_9774691_20220104234504.xml","dest":"data/Rundowns/2022/W01"}}
+{"index":502,"status":"FAILURE","action":"mv","data":{"date":"2022-01-11","week":"W02","file":"data/Rundowns/2022/W01/RD_20-24_RŽ_Sport_-_Tue__11_01_2022_2_9857136_20220111234504.xml","dest":"data/Rundowns/2022/W02"}}
+{"index":503,"status":"SUCCESS","action":"none","data":{"date":"2022-01-05","week":"W01","file":"data/Rundowns/2022/W01/RD_20-24_RŽ_Sport_-_Wed__05_01_2022_2_9788319_20220105234504.xml","dest":"data/Rundowns/2022/W01"}}
+{"index":504,"status":"FAILURE","action":"mv","data":{"date":"2022-01-12","week":"W02","file":"data/Rundowns/2022/W01/RD_20-24_RŽ_Sport_-_Wed__12_01_2022_2_9870175_20220112234504.xml","dest":"data/Rundowns/2022/W02"}}
 ```
 
 The each line is a valid JSON object and contains the following fields:
