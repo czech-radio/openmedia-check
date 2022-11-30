@@ -13,6 +13,10 @@ var Messages []Message
 // Test on real data
 // -----------------------------------------------------------------
 
+// -----------------------------------------------------------------
+// Rundowns Functions
+// -----------------------------------------------------------------
+
 func TestReportRundown(t *testing.T) {
 
 	path := filepath.Join("test", "data", "Rundowns", "2022", "W01")
@@ -23,7 +27,10 @@ func TestReportRundown(t *testing.T) {
 	t.Log(files)
 
 	Messages = ReportRundowns(path, path, files)
+	if len(Messages) == 0 {
 
+		t.Error("Report failed to create")
+	}
 }
 
 // Test that Message struct is created and formatted right
@@ -47,3 +54,7 @@ func TestFormatMessage(t *testing.T) {
 func TestRepairRundown(t *testing.T) {
 	RepairRundows(Messages, true)
 }
+
+// -----------------------------------------------------------------
+// Contact Functions
+// -----------------------------------------------------------------
