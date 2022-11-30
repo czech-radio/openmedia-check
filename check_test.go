@@ -29,18 +29,17 @@ func ReadFile() io.Reader {
 	return r
 }
 
-// test parsing mockData
+// test ParseRundown on mockData
 func TestParseRundown(t *testing.T) {
-	year, month, day, week := ParseRundown(ReadFile())
-	
+	year, month, day, week := ParseRundown(ReadFile(), false)
         // returns 0,0,0,0 due to utf-16 reader object (probably)
         t.Logf("%v %v %v %v", year, month, day, week)
 }
 
-// Test that Message struct is created
-func TestCreateMessage(t *testing.T) {
-
-	message := Message{
+// Test that Message struct is created and formatted right
+func TestFromatMessage(t *testing.T) {
+        
+        message := Message{
 		Index:  0,
 		Status: "SUCCESS",
 		Action: "none",
@@ -52,8 +51,9 @@ func TestCreateMessage(t *testing.T) {
 		},
 	}
 
-	t.Logf("Message created: %q", message)
+        FormatMessage(message)
 }
+
 
 // Test that something equals
 func TestSomething(t *testing.T) {
@@ -63,6 +63,7 @@ func TestSomething(t *testing.T) {
 
 	if A != B {
 		t.Errorf("Output %q not equal to expected %q", A, B)
+                t.Fail()
 	}
 }
 
@@ -95,9 +96,9 @@ var mockData []byte = []byte(`
 </OM_FIELD>
 <OM_FIELD FieldID="8" FieldType="1" FieldName="Název" IsEmpty="no">
 <OM_STRING>00-05 ČRo Region SC - Čtvrtek 06.01.2022</OM_STRING>
+</OM_HEADER>
 </OM_FIELD>
 <OM_FIELD FieldID="1004" FieldType="3" FieldName="Čas začátku" IsEmpty="no"><OM_DATETIME>20220106T000000,000</OM_DATETIME></OM_FIELD>
-</OM_HEADER>
 </OM_OBJECT>
 </OPENMEDIA>
 `)

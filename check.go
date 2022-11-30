@@ -43,12 +43,17 @@ type Message struct {
 //----------------------------------------------------------------------------
 
 // ParseRundown parses openmedia file and returns date.
-func ParseRundown(handle io.Reader) (Year, Month, Day, Week int) {
+func ParseRundown(handle io.Reader, isUtf16 bool) (Year, Month, Day, Week int) {
 
 	var year, month, day, week = 0, 0, 0, 0
+        var scanner bufio.Scanner
+        
+        if isUtf16 {
+          scanner = *bufio.NewScanner(transform.NewReader(handle, unicode.UTF16(unicode.LittleEndian, unicode.UseBOM).NewDecoder()))
+        }else{
+          scanner = *bufio.NewScanner(transform.NewReader(handle,unicode.UTF8.NewDecoder()))
 
-	scanner := bufio.NewScanner(transform.NewReader(handle, unicode.UTF16(unicode.LittleEndian, unicode.UseBOM).NewDecoder()))
-
+        }
 	for scanner.Scan() {
 		var line = fmt.Sprintln(scanner.Text())
 
@@ -97,7 +102,7 @@ func ReportRundowns(annova string, path string, files []os.FileInfo) []Message {
 
 		defer fptr.Close()
 
-		year, month, day, fileWeek := ParseRundown(fptr)
+		year, month, day, fileWeek := ParseRundown(fptr, true)
 		dirWeek, _ := strconv.Atoi(filepath.Base(path)[1:])
 
 		if fileWeek == dirWeek {
