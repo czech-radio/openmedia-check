@@ -52,9 +52,9 @@ func ParseRundown(handle io.Reader, isUtf16 bool) (Year, Month, Day, Week int) {
           scanner = *bufio.NewScanner(transform.NewReader(handle, unicode.UTF16(unicode.LittleEndian, unicode.UseBOM).NewDecoder()))
         }else{
           scanner = *bufio.NewScanner(transform.NewReader(handle,unicode.UTF8.NewDecoder()))
-
         }
-	for scanner.Scan() {
+	
+        for scanner.Scan() {
 		var line = fmt.Sprintln(scanner.Text())
 
 		if strings.Contains(line, `FieldID = "1004"`) {

@@ -6,39 +6,62 @@ import (
 	"strings"
 	"testing"
 	"testing/fstest"
+
+	"github.com/spf13/afero"
 )
 
 // Test that mock file is created in memory
 func TestMemoryFile(t *testing.T) {
-	fs := fstest.MapFS{
-		"hello.xml": {
+         fs := fstest.MapFS{
+		"hello1.xml": {
 			Data: mockData,
 		},
-	}
-	fileHandle, err := fs.ReadFile("hello.xml")
+        "hello2.xml": {
+			Data: mockData,
+		},
+            }
+        fileHandle, err := fs.ReadFile("hello1.xml")
 	if err != nil {
 		t.Errorf("%q", err.Error())
 	}
+
 	t.Log(len(string(fileHandle)))
 }
 
+// afero mocking filesystem
+func TestReportRundown(t *testing.T) {
+    //virtual filesystem
+    appFS := afero.NewMemMapFs()
+    afero.WriteFile(appFS,"one.xml", mockData, 0644)
+    afero.WriteFile(appFS,"two.xml", mockData, 0644)
+
+    files, err := afero.ReadDir(appFS,"/")
+    if err != nil{
+        t.Error("Error opening file")
+    }
+    t.Log(files)
+    
+    
+    //ReportRundowns("/","/",files,true)
+
+}
 // helper function
-func ReadFile() io.Reader {
-	var r io.Reader
-	r = strings.NewReader(string(mockData))
-	return r
+func ReadFile(bytes []byte) io.Reader {
+        return strings.NewReader(string(bytes))
 }
 
 // test ParseRundown on mockData
 func TestParseRundown(t *testing.T) {
-	year, month, day, week := ParseRundown(ReadFile(), false)
+        t.Logf("%T",ReadFile(mockData))
+        // bytes, and utf-16 false
+	year, month, day, week := ParseRundown(ReadFile(mockData), false)
         // returns 0,0,0,0 due to utf-16 reader object (probably)
         t.Logf("%v %v %v %v", year, month, day, week)
 }
 
+
 // Test that Message struct is created and formatted right
-func TestFromatMessage(t *testing.T) {
-        
+func TestFormatMessage(t *testing.T) {
         message := Message{
 		Index:  0,
 		Status: "SUCCESS",
@@ -53,7 +76,6 @@ func TestFromatMessage(t *testing.T) {
 
         FormatMessage(message)
 }
-
 
 // Test that something equals
 func TestSomething(t *testing.T) {
@@ -75,29 +97,6 @@ func TestSomething(t *testing.T) {
 var mockData []byte = []byte(`
 <OPENMEDIA>
 <OM_OBJECT SystemID="3fc88f5c-ef6b-44fa-bdef-002c69855f16" ObjectID="0000000200957e65" DocumentURN="urn:openmedia:3fc88f5c-ef6b-44fa-bdef-002c69855f16:0000000200957E65" DirectoryID="0000000200003f57" InternalType="1" TemplateID="fffffffa00001022" TemplateType="1" TemplateName="Radio Rundown">
-<OM_HEADER>
-<OM_FIELD FieldID="1" FieldType="3" FieldName="Čas vytvoření" IsEmpty="no">
-<OM_DATETIME>20211223T010314,000</OM_DATETIME>
-</OM_FIELD>
-<OM_FIELD FieldID="2" FieldType="3" FieldName="Aktualizováno kdy" IsEmpty="no">
-<OM_DATETIME>20211223T010314,000</OM_DATETIME>
-</OM_FIELD>
-<OM_FIELD FieldID="3" FieldType="1" FieldName="Owner Name" IsEmpty="no">
-<OM_STRING>admin</OM_STRING>
-</OM_FIELD>
-<OM_FIELD FieldID="5" FieldType="1" FieldName="Vytvořil" IsEmpty="no">
-<OM_STRING>user_superuser</OM_STRING>
-</OM_FIELD>
-<OM_FIELD FieldID="6" FieldType="1" FieldName="Autor" IsEmpty="no">
-<OM_STRING>user_superuser</OM_STRING>
-</OM_FIELD>
-<OM_FIELD FieldID="7" FieldType="1" FieldName="Titul" IsEmpty="yes">
-<OM_STRING/>
-</OM_FIELD>
-<OM_FIELD FieldID="8" FieldType="1" FieldName="Název" IsEmpty="no">
-<OM_STRING>00-05 ČRo Region SC - Čtvrtek 06.01.2022</OM_STRING>
-</OM_HEADER>
-</OM_FIELD>
 <OM_FIELD FieldID="1004" FieldType="3" FieldName="Čas začátku" IsEmpty="no"><OM_DATETIME>20220106T000000,000</OM_DATETIME></OM_FIELD>
 </OM_OBJECT>
 </OPENMEDIA>
