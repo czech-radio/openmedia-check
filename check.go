@@ -145,7 +145,7 @@ func FormatMessage(report Message) string {
 }
 
 // RepairRundows (unimplemented) do filechanges to files on disk.
-func RepairRundows(actions []Message, shouldWriteChanges bool) {
+func RepairRundowns(actions []Message, shouldWriteChanges bool) {
 	// Execute the commands stored in actions.
 	for _, action := range actions {
 		if action.Action == "mv" && shouldWriteChanges {

@@ -92,6 +92,6 @@ func main() {
 
 	// apply changes here
 	for _, messages := range actions {
-		RepairRundows(messages, *ShouldWriteChanges)
+		RepairRundowns(messages, *ShouldWriteChanges)
 	}
 }
