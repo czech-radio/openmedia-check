@@ -56,7 +56,6 @@ The basic usage is as follows:
 
 - `-i` - The input folder or multiple input folders e.g. `"/path/to/rundowns/2022/W01 /path/to/contacts/2022/W02"`
 - `-o` - The output log name (default `openmedia.log`)
-- `-c` - Check contact counts in files.
 - `-w` - Write changes to file system.
 
 ### Output
