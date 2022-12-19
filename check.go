@@ -267,37 +267,37 @@ func FixFilename(orig string) string {
 	var modified string = orig
 
 	switch {
-	case strings.Contains(orig, "Pondělí"):
-		modified = strings.Replace(orig, "Pondělí", "Mon", -1)
-	case strings.Contains(orig, "Úterý"):
-		modified = strings.Replace(orig, "Úterý", "Tue", -1)
-	case strings.Contains(orig, "Středa"):
-		modified = strings.Replace(orig, "Středa", "Wed", -1)
-	case strings.Contains(orig, "Čtvrtek"):
-		modified = strings.Replace(orig, "Čtvrtek", "Thu", -1)
-	case strings.Contains(orig, "Pátek"):
-		modified = strings.Replace(orig, "Pátek", "Fri", -1)
-	case strings.Contains(orig, "Sobota"):
-		modified = strings.Replace(orig, "Sobota", "Sat", -1)
-	case strings.Contains(orig, "Neděle"):
-		modified = strings.Replace(orig, "Neděle", "Sun", -1)
+	case strings.Contains(orig, "_Pondělí_"):
+		modified = strings.Replace(orig, "_Pondělí_", "_Mon_", -1)
+	case strings.Contains(orig, "_Úterý_"):
+		modified = strings.Replace(orig, "_Úterý_", "_Tue_", -1)
+	case strings.Contains(orig, "_Středa_"):
+		modified = strings.Replace(orig, "_Středa_", "_Wed_", -1)
+	case strings.Contains(orig, "_Čtvrtek_"):
+		modified = strings.Replace(orig, "_Čtvrtek_", "_Thu_", -1)
+	case strings.Contains(orig, "_Pátek_"):
+		modified = strings.Replace(orig, "_Pátek_", "_Fri_", -1)
+	case strings.Contains(orig, "_Sobota_"):
+		modified = strings.Replace(orig, "_Sobota_", "_Sat_", -1)
+	case strings.Contains(orig, "_Neděle_"):
+		modified = strings.Replace(orig, "_Neděle_", "_Sun_", -1)
 	}
 
         switch {
-	case strings.Contains(orig, "Po"):
-		modified = strings.Replace(orig, "Po", "Mon", -1)
-	case strings.Contains(orig, "Út"):
-		modified = strings.Replace(orig, "Út", "Tue", -1)
-	case strings.Contains(orig, "St"):
-		modified = strings.Replace(orig, "Stř", "Wed", -1)
-	case strings.Contains(orig, "Čt"):
-		modified = strings.Replace(orig, "Čt", "Thu", -1)
-	case strings.Contains(orig, "Pá"):
-		modified = strings.Replace(orig, "Pá", "Fri", -1)
-	case strings.Contains(orig, "So"):
-		modified = strings.Replace(orig, "So", "Sat", -1)
-	case strings.Contains(orig, "Ne"):
-		modified = strings.Replace(orig, "Ne", "Sun", -1)
+	case strings.Contains(orig, "_Po_"):
+		modified = strings.Replace(orig, "_Po_", "_Mon_", -1)
+	case strings.Contains(orig, "_Út_"):
+		modified = strings.Replace(orig, "_Út_", "_Tue_", -1)
+	case strings.Contains(orig, "_St_"):
+		modified = strings.Replace(orig, "_St_", "_Wed_", -1)
+	case strings.Contains(orig, "_Čt_"):
+		modified = strings.Replace(orig, "_Čt_", "_Thu_", -1)
+	case strings.Contains(orig, "_Pá_"):
+		modified = strings.Replace(orig, "_Pá_", "_Fri_", -1)
+	case strings.Contains(orig, "_So_"):
+		modified = strings.Replace(orig, "_So_", "_Sat_", -1)
+	case strings.Contains(orig, "_Ne_"):
+		modified = strings.Replace(orig, "_Ne_", "_Sun_", -1)
 	}
 	return modified
 }
