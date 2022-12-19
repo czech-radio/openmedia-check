@@ -86,7 +86,7 @@ func ReportRundowns(annova string, path string, files []os.FileInfo) []Message {
 		fext := filepath.Ext(file.Name())
 
 		// File should be skipped because it is a directory or has wrong filename.
-                if file.IsDir() || fext != ".xml" || file.Name()[0:1] == "CT" {
+		if file.IsDir() || fext != ".xml" {
 			continue // should it be logged, or other action executed?
 		}
 
@@ -94,6 +94,10 @@ func ReportRundowns(annova string, path string, files []os.FileInfo) []Message {
 
 		if err != nil {
 			log.Fatal(err)
+		}
+
+		if strings.Contains(file.Name(), "CT") {
+			continue
 		}
 
 		defer fptr.Close()
@@ -170,21 +174,87 @@ func RepairRundowns(actions []Message, shouldWriteChanges bool) {
 //----------------------------------------------------------------------------
 
 // ParseContact get io.Reader handler and do open media contact counts.
-func ParseContact(handle io.Reader) int {
+func ParseContact(handle io.Reader) (Year, Month, Day, Week int) {
 
 	scanner := bufio.NewScanner(transform.NewReader(handle, unicode.UTF16(unicode.LittleEndian, unicode.UseBOM).NewDecoder()))
 
-	var count int = 0
+	var year, month, day, week = 0, 0, 0, 0
+
 	for scanner.Scan() {
-		// TODO `"ContactContainerFieldID IsEmpty = "no"`
+		var line = fmt.Sprintln(scanner.Text())
+
+		if strings.Contains(line, `FieldName = "Čas vytvoření" IsEmpty = "no"`) {
+			reg := regexp.MustCompile("([0-9][0-9][0-9][0-9]{1})([0-9]{2})([0-9]{2})(T)")
+			res := reg.FindStringSubmatch(line)
+
+			date, err := time.Parse("20060102", res[1]+res[2]+res[3])
+
+			if err != nil {
+				log.Fatal(err)
+			}
+
+			year, month, day = date.Year(), int(date.Month()), date.Day()
+			year, week = date.ISOWeek()
+			break // Find first ocurrance!
+		}
 	}
 
-	return count
+	return year, month, day, week
 }
 
 // ReportContacts makes openmedia contacts count and outputs slice of ... (unimplemented)
-func ReportContacts(path string, files []os.FileInfo) []string {
-	var result = make([]string, len(files))
+func ReportContacts(annova string, path string, files []os.FileInfo) []Message {
+	var result = make([]Message, len(files))
+
+	status := (map[bool]string{true: "SUCCESS", false: "FAILURE"})
+	actions := (map[int]string{0: "none", 1: "mv", 2: "rm"})
+	var actionNo int
+
+	for i, file := range files {
+
+		fext := filepath.Ext(file.Name())
+
+		// File should be skipped because it is a directory or has wrong filename.
+		if file.IsDir() || fext != ".xml" {
+			continue // should it be logged, or other action executed?
+		}
+
+		fptr, err := os.Open(filepath.Join(path, file.Name()))
+
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		if strings.Contains(file.Name(), "RD") {
+			continue
+		}
+
+		defer fptr.Close()
+
+		year, month, day, fileWeek := ParseContact(fptr)
+		dirWeek, _ := strconv.Atoi(filepath.Base(path)[1:])
+
+		if fileWeek == dirWeek {
+			actionNo = 0
+		} else if fileWeek != dirWeek {
+			actionNo = 1
+		}
+
+		message := &Message{
+			Index:  i,
+			Status: (status[fileWeek == dirWeek]),
+			Action: actions[actionNo],
+			Data: Data{
+				Date: fmt.Sprintf("%04d-%02d-%02d", year, month, day),
+				Week: fmt.Sprintf("W%02d", fileWeek),
+				File: fmt.Sprintf("%s", filepath.Join(path, file.Name())),
+				Dest: fmt.Sprintf(filepath.Join(fmt.Sprintf("%s", annova), "Contacts", fmt.Sprintf("%04d", year), fmt.Sprintf("W%02d", fileWeek))),
+			},
+		}
+
+		result = append(result, *message)
+
+	}
 
 	/* TODO */
 

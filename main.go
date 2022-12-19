@@ -88,6 +88,7 @@ func main() {
 		}
 
 		actions = append(actions, ReportRundowns(ANNOVA, folder, files))
+		actions = append(actions, ReportContacts(ANNOVA, folder, files))
 	}
 
 	// apply changes here
