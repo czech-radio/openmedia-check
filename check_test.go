@@ -51,8 +51,8 @@ func TestFormatMessage(t *testing.T) {
 }
 
 // Test that move function is triggered
-func TestRepairRundown(t *testing.T) {
-	RepairRundowns(Messages, true)
+func TestRepairFiles(t *testing.T) {
+	RepairFiles(Messages, true)
 }
 
 // -----------------------------------------------------------------

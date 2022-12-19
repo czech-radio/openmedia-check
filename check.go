@@ -144,30 +144,7 @@ func FormatMessage(report Message) string {
 	return string(reportJSONLine)
 }
 
-// RepairRundows (unimplemented) do filechanges to files on disk.
-func RepairRundowns(actions []Message, shouldWriteChanges bool) {
-	// Execute the commands stored in actions.
-	for _, action := range actions {
-		if action.Action == "mv" && shouldWriteChanges {
 
-			//check whatever dest directory exists, if not create it
-			_, err := os.Stat(action.Data.Dest)
-			if os.IsNotExist(err) {
-				err := os.Mkdir(action.Data.Dest, 0775)
-				if err != nil {
-					log.Fatal(err)
-				}
-			}
-
-			// move file to
-			_, filename := filepath.Split(action.Data.File)
-			e := os.Rename(action.Data.File, path.Join(action.Data.Dest, filename))
-			if e != nil {
-				log.Fatal(e)
-			}
-		}
-	}
-}
 
 //----------------------------------------------------------------------------
 // CONTACTS (TODO)
@@ -202,7 +179,7 @@ func ParseContact(handle io.Reader) (Year, Month, Day, Week int) {
 	return year, month, day, week
 }
 
-// ReportContacts makes openmedia contacts count and outputs slice of ... (unimplemented)
+// ReportContacts detects right date from CT files.
 func ReportContacts(annova string, path string, files []os.FileInfo) []Message {
 	var result = make([]Message, len(files))
 
@@ -253,16 +230,37 @@ func ReportContacts(annova string, path string, files []os.FileInfo) []Message {
 		}
 
 		result = append(result, *message)
+		
+                FormatMessage(*message)
 
 	}
-
-	/* TODO */
 
 	return result
 
 }
 
-// RepairContacts fixes ... (unimplemented)
-func RepairContacts(actions []string) {
-	// TODO Execute the commands stored in actions.
+
+// RepairFiles do filechanges to files on disk.
+func RepairFiles(actions []Message, shouldWriteChanges bool) {
+	// Execute the commands stored in actions.
+	for _, action := range actions {
+		if action.Action == "mv" && shouldWriteChanges {
+
+			//check whatever dest directory exists, if not create it
+			_, err := os.Stat(action.Data.Dest)
+			if os.IsNotExist(err) {
+				err := os.Mkdir(action.Data.Dest, 0775)
+				if err != nil {
+					log.Fatal(err)
+				}
+			}
+
+			// move file to
+			_, filename := filepath.Split(action.Data.File)
+			e := os.Rename(action.Data.File, path.Join(action.Data.Dest, filename))
+			if e != nil {
+				log.Fatal(e)
+			}
+		}
+	}
 }
