@@ -105,7 +105,7 @@ func ReportRundowns(annova string, path string, files []os.FileInfo) []Message {
 		year, month, day, fileWeek := ParseRundown(fptr)
 		dirWeek, _ := strconv.Atoi(filepath.Base(path)[1:])
 
-		if fileWeek == dirWeek && file.Name() == FixFilename(file.Name()){
+		if fileWeek == dirWeek && file.Name() == FixFilename(file.Name()) {
 			actionNo = 0
 		} else if fileWeek != dirWeek || file.Name() != FixFilename(file.Name()) {
 			actionNo = 1
@@ -209,9 +209,9 @@ func ReportContacts(annova string, path string, files []os.FileInfo) []Message {
 		year, month, day, fileWeek := ParseContact(fptr)
 		dirWeek, _ := strconv.Atoi(filepath.Base(path)[1:])
 
-		if fileWeek == dirWeek && file.Name() == FixFilename(file.Name()){
+		if fileWeek == dirWeek && file.Name() == FixFilename(file.Name()) {
 			actionNo = 0
-		} else if fileWeek != dirWeek || file.Name() != FixFilename(file.Name()){
+		} else if fileWeek != dirWeek || file.Name() != FixFilename(file.Name()) {
 			actionNo = 1
 		}
 
@@ -283,7 +283,7 @@ func FixFilename(orig string) string {
 		modified = strings.Replace(orig, "_Neděle_", "_Sun_", -1)
 	}
 
-        switch {
+	switch {
 	case strings.Contains(orig, "_Po_"):
 		modified = strings.Replace(orig, "_Po_", "_Mon_", -1)
 	case strings.Contains(orig, "_Út_"):
