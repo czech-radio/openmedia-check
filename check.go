@@ -119,7 +119,7 @@ func ReportRundowns(annova string, path string, files []os.FileInfo) []Message {
 				Date: fmt.Sprintf("%04d-%02d-%02d", year, month, day),
 				Week: fmt.Sprintf("W%02d", fileWeek),
 				File: fmt.Sprintf("%s", filepath.Join(path, file.Name())),
-				Dest: fmt.Sprintf(filepath.Join(fmt.Sprintf("%s", annova), "Rundowns", fmt.Sprintf("%04d", year), fmt.Sprintf("W%02d", fileWeek))),
+				Dest: fmt.Sprintf(filepath.Join(fmt.Sprintf("%s", annova), "Rundowns", fmt.Sprintf("%04d", year), fmt.Sprintf("W%02d", fileWeek), FixFilename(file.Name()))),
 			},
 		}
 
@@ -143,8 +143,6 @@ func FormatMessage(report Message) string {
 	fmt.Println(string(reportJSONLine)) // How to send this to another function (Python yield style)?
 	return string(reportJSONLine)
 }
-
-
 
 //----------------------------------------------------------------------------
 // CONTACTS (TODO)
@@ -225,20 +223,19 @@ func ReportContacts(annova string, path string, files []os.FileInfo) []Message {
 				Date: fmt.Sprintf("%04d-%02d-%02d", year, month, day),
 				Week: fmt.Sprintf("W%02d", fileWeek),
 				File: fmt.Sprintf("%s", filepath.Join(path, file.Name())),
-				Dest: fmt.Sprintf(filepath.Join(fmt.Sprintf("%s", annova), "Contacts", fmt.Sprintf("%04d", year), fmt.Sprintf("W%02d", fileWeek))),
+				Dest: fmt.Sprintf(filepath.Join(fmt.Sprintf("%s", annova), "Contacts", fmt.Sprintf("%04d", year), fmt.Sprintf("W%02d", fileWeek), FixFilename(file.Name()))),
 			},
 		}
 
 		result = append(result, *message)
-		
-                FormatMessage(*message)
+
+		FormatMessage(*message)
 
 	}
 
 	return result
 
 }
-
 
 // RepairFiles do filechanges to files on disk.
 func RepairFiles(actions []Message, shouldWriteChanges bool) {
@@ -263,4 +260,28 @@ func RepairFiles(actions []Message, shouldWriteChanges bool) {
 			}
 		}
 	}
+}
+
+// FixFilename (unimplemented) should fix the filenames to unified format
+func FixFilename(orig string) string {
+	var modified string = orig
+
+	switch {
+	case strings.Contains(orig, "Pondělí"):
+		modified = strings.Replace(orig, "Pondělí", "Mon", -1)
+	case strings.Contains(orig, "Úterý"):
+		modified = strings.Replace(orig, "Úterý", "Tue", -1)
+	case strings.Contains(orig, "Středa"):
+		modified = strings.Replace(orig, "Středa", "Wed", -1)
+	case strings.Contains(orig, "Čtvrtek"):
+		modified = strings.Replace(orig, "Čtvrtek", "Thu", -1)
+	case strings.Contains(orig, "Pátek"):
+		modified = strings.Replace(orig, "Pátek", "Fri", -1)
+	case strings.Contains(orig, "Sobota"):
+		modified = strings.Replace(orig, "Sobota", "Sat", -1)
+	case strings.Contains(orig, "Neděle"):
+		modified = strings.Replace(orig, "Neděle", "Sun", -1)
+	}
+
+	return modified
 }

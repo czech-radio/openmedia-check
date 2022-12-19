@@ -1,7 +1,3 @@
-/*
-@todo
-*/
-
 package main
 
 import (
