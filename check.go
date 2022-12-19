@@ -105,6 +105,8 @@ func ReportRundowns(annova string, path string, files []os.FileInfo) []Message {
 		year, month, day, fileWeek := ParseRundown(fptr)
 		dirWeek, _ := strconv.Atoi(filepath.Base(path)[1:])
 
+
+
 		if fileWeek == dirWeek && file.Name() == FixFilename(file.Name()) {
 			actionNo = 0
 		} else if fileWeek != dirWeek || file.Name() != FixFilename(file.Name()) {
@@ -298,6 +300,11 @@ func FixFilename(orig string) string {
 		modified = strings.Replace(orig, "_So_", "_Sat_", -1)
 	case strings.Contains(orig, "_Ne_"):
 		modified = strings.Replace(orig, "_Ne_", "_Sun_", -1)
-	}
+        case strings.Contains(orig,"__"):
+                modified = strings.Replace(orig, "__","_",-1)
+        }
+
+        
+
 	return modified
 }
