@@ -105,15 +105,15 @@ func ReportRundowns(annova string, path string, files []os.FileInfo) []Message {
 		year, month, day, fileWeek := ParseRundown(fptr)
 		dirWeek, _ := strconv.Atoi(filepath.Base(path)[1:])
 
-		if fileWeek == dirWeek {
+		if fileWeek == dirWeek && file.Name() == FixFilename(file.Name()){
 			actionNo = 0
-		} else if fileWeek != dirWeek {
+		} else if fileWeek != dirWeek || file.Name() != FixFilename(file.Name()) {
 			actionNo = 1
 		}
 
 		message := &Message{
 			Index:  i,
-			Status: (status[fileWeek == dirWeek]),
+			Status: (status[fileWeek == dirWeek && file.Name() == FixFilename(file.Name())]),
 			Action: actions[actionNo],
 			Data: Data{
 				Date: fmt.Sprintf("%04d-%02d-%02d", year, month, day),
@@ -209,15 +209,15 @@ func ReportContacts(annova string, path string, files []os.FileInfo) []Message {
 		year, month, day, fileWeek := ParseContact(fptr)
 		dirWeek, _ := strconv.Atoi(filepath.Base(path)[1:])
 
-		if fileWeek == dirWeek {
+		if fileWeek == dirWeek && file.Name() == FixFilename(file.Name()){
 			actionNo = 0
-		} else if fileWeek != dirWeek {
+		} else if fileWeek != dirWeek || file.Name() != FixFilename(file.Name()){
 			actionNo = 1
 		}
 
 		message := &Message{
 			Index:  i,
-			Status: (status[fileWeek == dirWeek]),
+			Status: (status[fileWeek == dirWeek && file.Name() == FixFilename(file.Name())]),
 			Action: actions[actionNo],
 			Data: Data{
 				Date: fmt.Sprintf("%04d-%02d-%02d", year, month, day),
