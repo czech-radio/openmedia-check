@@ -16,9 +16,6 @@ const VERSION = "0.2.0"
 // ShouldWriteChanges is a switch to write changes on disk or not true : false.
 var ShouldWriteChanges bool
 
-// ShouldCheckContacts is a switch to check contacts in file or not, true : false.
-var ShouldCheckContacts bool
-
 // ANNOVA is SYSVAR pointing to Openmedia root folder path
 var ANNOVA string
 
@@ -47,7 +44,6 @@ func main() {
 	OUTPUT := flag.String("o", "", "The output file name.")
 
 	ShouldWriteChanges := flag.Bool("w", false, "Should write changes?")
-	ShouldCheckContacts := flag.Bool("c", false, "Should count contacts?")
 
 	flag.Parse()
 
@@ -64,13 +60,9 @@ func main() {
 		*ShouldWriteChanges = true
 	}
 
-	if isFlagPassed("c") {
-		*ShouldCheckContacts = true
-	}
-
 	flag.Usage = func() {
 		fmt.Println("Usage:")
-		fmt.Println(`./openmedia-check -i "<path> [path...]" [-o <file_name>] [-c] [-w]`)
+		fmt.Println(`./openmedia-check -i "<path> [path...]" [-o <file_name>] [-w]`)
 	}
 
 	var actions [][]Message
