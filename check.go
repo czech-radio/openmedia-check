@@ -283,5 +283,21 @@ func FixFilename(orig string) string {
 		modified = strings.Replace(orig, "Neděle", "Sun", -1)
 	}
 
+        switch {
+	case strings.Contains(orig, "Po"):
+		modified = strings.Replace(orig, "Po", "Mon", -1)
+	case strings.Contains(orig, "Út"):
+		modified = strings.Replace(orig, "Út", "Tue", -1)
+	case strings.Contains(orig, "St"):
+		modified = strings.Replace(orig, "Stř", "Wed", -1)
+	case strings.Contains(orig, "Čt"):
+		modified = strings.Replace(orig, "Čt", "Thu", -1)
+	case strings.Contains(orig, "Pá"):
+		modified = strings.Replace(orig, "Pá", "Fri", -1)
+	case strings.Contains(orig, "So"):
+		modified = strings.Replace(orig, "So", "Sat", -1)
+	case strings.Contains(orig, "Ne"):
+		modified = strings.Replace(orig, "Ne", "Sun", -1)
+	}
 	return modified
 }
