@@ -100,11 +100,13 @@ func ReportRundowns(annova string, path string, files []os.FileInfo) []Message {
 			continue
 		}
 
-		defer fptr.Close()
 
 		year, month, day, fileWeek := ParseRundown(fptr)
 		dirWeek, _ := strconv.Atoi(filepath.Base(path)[1:])
 		isFilenameTheSame := file.Name() == FixFilename(file.Name())
+		
+                //defer fptr.Close()
+                fptr.Close() // defer leaves too many files opened at once
 
 		if fileWeek == dirWeek && isFilenameTheSame {
 			actionNo = 0
@@ -206,11 +208,13 @@ func ReportContacts(annova string, path string, files []os.FileInfo) []Message {
 			continue
 		}
 
-		defer fptr.Close()
 
 		year, month, day, fileWeek := ParseContact(fptr)
 		dirWeek, _ := strconv.Atoi(filepath.Base(path)[1:])
 		isFilenameTheSame := file.Name() == FixFilename(file.Name())
+		
+                // don't use defer, close file after read
+                fptr.Close()
 
 		if fileWeek == dirWeek && isFilenameTheSame {
 			actionNo = 0
