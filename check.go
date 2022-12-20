@@ -264,6 +264,37 @@ func RepairFiles(actions []Message, shouldWriteChanges bool) {
 	}
 }
 
+// RemoveEmptyLines should remove empty lines from file list.
+func RemoveEmptyLines(annova string, path string, files []os.FileInfo) {
+
+        for _, file := range files {
+                fext := filepath.Ext(file.Name())
+
+		// File should be skipped because it is a directory or has wrong filename.
+		if file.IsDir() || fext != ".xml" {
+			continue // should it be logged, or other action executed?
+		}
+
+		fptr, _ := os.Open(filepath.Join(path, file.Name()))
+	        scanner := bufio.NewScanner(transform.NewReader(fptr, unicode.UTF16(unicode.LittleEndian, unicode.UseBOM).NewDecoder()))
+
+                defer fptr.Close()
+
+          var modded []string
+      	  for scanner.Scan() {
+		var line = fmt.Sprintln(scanner.Text())
+                if strings.TrimSpace(line) == "" {
+                  continue
+                }else{
+                  modded = append(modded, line)
+                }
+              }
+
+              /* TODO Minification writing new file in UTF-16 as it was read. */
+
+        }
+      }
+
 // FixFilename (unimplemented) should fix the filenames to unified format
 func FixFilename(orig string) string {
 	var modified string = orig
