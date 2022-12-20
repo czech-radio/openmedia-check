@@ -316,9 +316,6 @@ func FixFilename(orig string) string {
 		modified = strings.Replace(orig, "_Sobota_", "_Sat_", -1)
 	case strings.Contains(orig, "_Neděle_"):
 		modified = strings.Replace(orig, "_Neděle_", "_Sun_", -1)
-	}
-
-	switch {
 	case strings.Contains(orig, "_Po_"):
 		modified = strings.Replace(orig, "_Po_", "_Mon_", -1)
 	case strings.Contains(orig, "_Út_"):
@@ -333,9 +330,9 @@ func FixFilename(orig string) string {
 		modified = strings.Replace(orig, "_So_", "_Sat_", -1)
 	case strings.Contains(orig, "_Ne_"):
 		modified = strings.Replace(orig, "_Ne_", "_Sun_", -1)
-	case strings.Contains(orig, "__"):
-		modified = strings.Replace(orig, "__", "_", -1)
 	}
+	
+        modified = strings.Replace(orig, "__", "_", -1)
 
 	return modified
 }
