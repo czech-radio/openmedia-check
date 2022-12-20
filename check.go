@@ -104,18 +104,17 @@ func ReportRundowns(annova string, path string, files []os.FileInfo) []Message {
 
 		year, month, day, fileWeek := ParseRundown(fptr)
 		dirWeek, _ := strconv.Atoi(filepath.Base(path)[1:])
+                isFilenameTheSame := file.Name() == FixFilename(file.Name())
 
-
-
-		if fileWeek == dirWeek && file.Name() == FixFilename(file.Name()) {
+		if fileWeek == dirWeek && isFilenameTheSame {
 			actionNo = 0
-		} else if fileWeek != dirWeek || file.Name() != FixFilename(file.Name()) {
+		} else if fileWeek != dirWeek || !isFilenameTheSame {
 			actionNo = 1
 		}
 
 		message := &Message{
 			Index:  i,
-			Status: (status[fileWeek == dirWeek && file.Name() == FixFilename(file.Name())]),
+			Status: (status[fileWeek == dirWeek && isFilenameTheSame]),
 			Action: actions[actionNo],
 			Data: Data{
 				Date: fmt.Sprintf("%04d-%02d-%02d", year, month, day),
@@ -210,16 +209,17 @@ func ReportContacts(annova string, path string, files []os.FileInfo) []Message {
 
 		year, month, day, fileWeek := ParseContact(fptr)
 		dirWeek, _ := strconv.Atoi(filepath.Base(path)[1:])
+                isFilenameTheSame := file.Name() == FixFilename(file.Name())
 
-		if fileWeek == dirWeek && file.Name() == FixFilename(file.Name()) {
+		if fileWeek == dirWeek && isFilenameTheSame {
 			actionNo = 0
-		} else if fileWeek != dirWeek || file.Name() != FixFilename(file.Name()) {
+		} else if fileWeek != dirWeek || !isFilenameTheSame {
 			actionNo = 1
 		}
 
 		message := &Message{
 			Index:  i,
-			Status: (status[fileWeek == dirWeek && file.Name() == FixFilename(file.Name())]),
+			Status: (status[fileWeek == dirWeek && isFilenameTheSame]),
 			Action: actions[actionNo],
 			Data: Data{
 				Date: fmt.Sprintf("%04d-%02d-%02d", year, month, day),
@@ -300,11 +300,9 @@ func FixFilename(orig string) string {
 		modified = strings.Replace(orig, "_So_", "_Sat_", -1)
 	case strings.Contains(orig, "_Ne_"):
 		modified = strings.Replace(orig, "_Ne_", "_Sun_", -1)
-        case strings.Contains(orig,"__"):
-                modified = strings.Replace(orig, "__","_",-1)
-        }
-
-        
+	case strings.Contains(orig, "__"):
+		modified = strings.Replace(orig, "__", "_", -1)
+	}
 
 	return modified
 }
