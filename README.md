@@ -33,8 +33,8 @@
 
 ## Usage
 
-This program can operate only on *week* directores i.e. `W01`-`W52(3)`!
-The OpenMedia export folder must accessible (should mounted if you are on Linux mahine).
+This program can operate directly on $ANNOVA path (sorting new-comming files) or separate *week* folder(s) i.e: _W01-W53_.
+The OpenMedia export folder must accessible (should mounted if you are on Linux machine).
 
 Program needs `$ANNOVA` system variable and/or `.env` file which contains such variable to be filled in before run.
 `$ANNOVA` should be the path of data repository root folder, the one holding sub-folders named `Contacts`, `Rundowns`.

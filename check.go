@@ -104,7 +104,7 @@ func ReportRundowns(annova string, path string, files []os.FileInfo) []Message {
 
 		year, month, day, fileWeek := ParseRundown(fptr)
 		dirWeek, _ := strconv.Atoi(filepath.Base(path)[1:])
-                isFilenameTheSame := file.Name() == FixFilename(file.Name())
+		isFilenameTheSame := file.Name() == FixFilename(file.Name())
 
 		if fileWeek == dirWeek && isFilenameTheSame {
 			actionNo = 0
@@ -159,7 +159,7 @@ func ParseContact(handle io.Reader) (Year, Month, Day, Week int) {
 	for scanner.Scan() {
 		var line = fmt.Sprintln(scanner.Text())
 
-                // jsou tam ruzna data.. cas vytvoreni nejstarsi, aktualizovano kdy byva jine a pozdejsi, cas zacatku ne vzdy vyplnen
+		// jsou tam ruzna data.. cas vytvoreni nejstarsi, aktualizovano kdy byva jine a pozdejsi, cas zacatku ne vzdy vyplnen
 		if strings.Contains(line, `FieldName = "Čas vytvoření" IsEmpty = "no"`) {
 			reg := regexp.MustCompile("([0-9][0-9][0-9][0-9]{1})([0-9]{2})([0-9]{2})(T)")
 			res := reg.FindStringSubmatch(line)
@@ -210,7 +210,7 @@ func ReportContacts(annova string, path string, files []os.FileInfo) []Message {
 
 		year, month, day, fileWeek := ParseContact(fptr)
 		dirWeek, _ := strconv.Atoi(filepath.Base(path)[1:])
-                isFilenameTheSame := file.Name() == FixFilename(file.Name())
+		isFilenameTheSame := file.Name() == FixFilename(file.Name())
 
 		if fileWeek == dirWeek && isFilenameTheSame {
 			actionNo = 0
@@ -268,8 +268,8 @@ func RepairFiles(actions []Message, shouldWriteChanges bool) {
 // RemoveEmptyLines should remove empty lines from file list.
 func RemoveEmptyLines(annova string, path string, files []os.FileInfo) {
 
-        for _, file := range files {
-                fext := filepath.Ext(file.Name())
+	for _, file := range files {
+		fext := filepath.Ext(file.Name())
 
 		// File should be skipped because it is a directory or has wrong filename.
 		if file.IsDir() || fext != ".xml" {
@@ -277,25 +277,25 @@ func RemoveEmptyLines(annova string, path string, files []os.FileInfo) {
 		}
 
 		fptr, _ := os.Open(filepath.Join(path, file.Name()))
-	        scanner := bufio.NewScanner(transform.NewReader(fptr, unicode.UTF16(unicode.LittleEndian, unicode.UseBOM).NewDecoder()))
+		scanner := bufio.NewScanner(transform.NewReader(fptr, unicode.UTF16(unicode.LittleEndian, unicode.UseBOM).NewDecoder()))
 
-                defer fptr.Close()
+		defer fptr.Close()
 
-          var modded []string
-      	  for scanner.Scan() {
-		var line = fmt.Sprintln(scanner.Text())
-                // strings.Contains(`Is Empty="yes"`) ? mozno zredukovat hodne prazdnych poli
-                if strings.TrimSpace(line) == "" {
-                  continue
-                }else{
-                  modded = append(modded, line)
-                }
-              }
+		var modded []string
+		for scanner.Scan() {
+			var line = fmt.Sprintln(scanner.Text())
+			// strings.Contains(`Is Empty="yes"`) ? mozno zredukovat hodne prazdnych poli
+			if strings.TrimSpace(line) == "" {
+				continue
+			} else {
+				modded = append(modded, line)
+			}
+		}
 
-              /* TODO Minification writing new file in UTF-16 as it was read. */
+		/* TODO Minification writing new file in UTF-16 as it was read. */
 
-        }
-      }
+	}
+}
 
 // FixFilename (unimplemented) should fix the filenames to unified format
 func FixFilename(orig string) string {
@@ -331,8 +331,8 @@ func FixFilename(orig string) string {
 	case strings.Contains(orig, "_Ne_"):
 		modified = strings.Replace(orig, "_Ne_", "_Sun_", -1)
 	}
-	
-        modified = strings.Replace(orig, "__", "_", -1)
+
+	modified = strings.Replace(modified, "__", "_", -1)
 
 	return modified
 }
