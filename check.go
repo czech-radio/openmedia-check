@@ -159,6 +159,7 @@ func ParseContact(handle io.Reader) (Year, Month, Day, Week int) {
 	for scanner.Scan() {
 		var line = fmt.Sprintln(scanner.Text())
 
+                // jsou tam ruzna data.. cas vytvoreni nejstarsi, aktualizovano kdy byva jine a pozdejsi, cas zacatku ne vzdy vyplnen
 		if strings.Contains(line, `FieldName = "Čas vytvoření" IsEmpty = "no"`) {
 			reg := regexp.MustCompile("([0-9][0-9][0-9][0-9]{1})([0-9]{2})([0-9]{2})(T)")
 			res := reg.FindStringSubmatch(line)
@@ -283,6 +284,7 @@ func RemoveEmptyLines(annova string, path string, files []os.FileInfo) {
           var modded []string
       	  for scanner.Scan() {
 		var line = fmt.Sprintln(scanner.Text())
+                // strings.Contains(`Is Empty="yes"`) ? mozno zredukovat hodne prazdnych poli
                 if strings.TrimSpace(line) == "" {
                   continue
                 }else{
