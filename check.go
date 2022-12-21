@@ -261,8 +261,7 @@ func RepairFiles(actions []Message, shouldWriteChanges bool) {
 			}
 
 			// move file to
-			_, filename := filepath.Split(action.Data.File)
-			e := os.Rename(action.Data.File, path.Join(action.Data.Dest, filename))
+			e := os.Rename(action.Data.File, action.Data.Dest)
 			if e != nil {
 				log.Fatal(e)
 			}
