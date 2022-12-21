@@ -90,14 +90,14 @@ func ReportRundowns(annova string, path string, files []os.FileInfo) []Message {
 			continue // should it be logged, or other action executed?
 		}
 
+		if strings.Contains(file.Name(), "CT") {
+			continue
+		}
+
 		fptr, err := os.Open(filepath.Join(path, file.Name()))
 
 		if err != nil {
 			log.Fatal(err)
-		}
-
-		if strings.Contains(file.Name(), "CT") {
-			continue
 		}
 
 
@@ -198,17 +198,17 @@ func ReportContacts(annova string, path string, files []os.FileInfo) []Message {
 			continue // should it be logged, or other action executed?
 		}
 
+		if strings.Contains(file.Name(), "RD") {
+			continue
+		}
+
 		fptr, err := os.Open(filepath.Join(path, file.Name()))
 
 		if err != nil {
 			log.Fatal(err)
 		}
 
-		if strings.Contains(file.Name(), "RD") {
-			continue
-		}
-
-
+	
 		year, month, day, fileWeek := ParseContact(fptr)
 		dirWeek, _ := strconv.Atoi(filepath.Base(path)[1:])
 		isFilenameTheSame := file.Name() == FixFilename(file.Name())
@@ -250,10 +250,11 @@ func RepairFiles(actions []Message, shouldWriteChanges bool) {
 	for _, action := range actions {
 		if action.Action == "mv" && shouldWriteChanges {
 
+			dirPath, _ := path.Split(action.Data.Dest)
 			//check whatever dest directory exists, if not create it
-			_, err := os.Stat(action.Data.Dest)
+			_, err := os.Stat(dirPath)
 			if os.IsNotExist(err) {
-				err := os.Mkdir(action.Data.Dest, 0775)
+				err := os.Mkdir(dirPath, 0775)
 				if err != nil {
 					log.Fatal(err)
 				}
