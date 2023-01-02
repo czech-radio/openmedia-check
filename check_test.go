@@ -26,7 +26,7 @@ func TestReportRundown(t *testing.T) {
 	}
 	t.Log(files)
 
-	Messages = ReportRundowns(path, path, files)
+	Messages = ReportRundowns(filepath.Join("test", "data"), path, files)
 	if len(Messages) == 0 {
 
 		t.Error("Report failed to create")
