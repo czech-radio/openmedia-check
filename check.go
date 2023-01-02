@@ -90,23 +90,22 @@ func ReportRundowns(annova string, path string, files []os.FileInfo) []Message {
 			continue // should it be logged, or other action executed?
 		}
 
-		if strings.Contains(file.Name(), "CT") {
-			continue
-		}
-
 		fptr, err := os.Open(filepath.Join(path, file.Name()))
 
 		if err != nil {
 			log.Fatal(err)
 		}
 
+		if strings.Contains(file.Name(), "CT") {
+			continue
+		}
 
 		year, month, day, fileWeek := ParseRundown(fptr)
 		dirWeek, _ := strconv.Atoi(filepath.Base(path)[1:])
 		isFilenameTheSame := file.Name() == FixFilename(file.Name())
-		
-                //defer fptr.Close()
-                fptr.Close() // defer leaves too many files opened at once
+
+		//defer fptr.Close()
+		fptr.Close() // defer leaves too many files opened at once
 
 		if fileWeek == dirWeek && isFilenameTheSame {
 			actionNo = 0
@@ -152,31 +151,21 @@ func FormatMessage(report Message) string {
 //----------------------------------------------------------------------------
 
 // ParseContact get io.Reader handler and do open media contact counts.
-func ParseContact(handle io.Reader) (Year, Month, Day, Week int) {
+func ParseContact(filename string) (Year, Month, Day, Week int) {
 
-	scanner := bufio.NewScanner(transform.NewReader(handle, unicode.UTF16(unicode.LittleEndian, unicode.UseBOM).NewDecoder()))
+	//scanner := bufio.NewScanner(transform.NewReader(handle, unicode.UTF16(unicode.LittleEndian, unicode.UseBOM).NewDecoder()))
 
+	split := strings.Split(filename, "_")
+
+	date, err := time.Parse("20060102", split[len(split)-1][0:8])
+
+	if err != nil {
+		log.Fatal(err)
+	}
 	var year, month, day, week = 0, 0, 0, 0
 
-	for scanner.Scan() {
-		var line = fmt.Sprintln(scanner.Text())
-
-		// jsou tam ruzna data.. cas vytvoreni nejstarsi, aktualizovano kdy byva jine a pozdejsi, cas zacatku ne vzdy vyplnen
-		if strings.Contains(line, `FieldName = "Čas vytvoření" IsEmpty = "no"`) {
-			reg := regexp.MustCompile("([0-9][0-9][0-9][0-9]{1})([0-9]{2})([0-9]{2})(T)")
-			res := reg.FindStringSubmatch(line)
-
-			date, err := time.Parse("20060102", res[1]+res[2]+res[3])
-
-			if err != nil {
-				log.Fatal(err)
-			}
-
-			year, month, day = date.Year(), int(date.Month()), date.Day()
-			year, week = date.ISOWeek()
-			break // Find first ocurrance!
-		}
-	}
+	year, month, day = date.Year(), int(date.Month()), date.Day()
+	year, week = date.ISOWeek()
 
 	return year, month, day, week
 }
@@ -198,23 +187,22 @@ func ReportContacts(annova string, path string, files []os.FileInfo) []Message {
 			continue // should it be logged, or other action executed?
 		}
 
-		if strings.Contains(file.Name(), "RD") {
-			continue
-		}
-
 		fptr, err := os.Open(filepath.Join(path, file.Name()))
 
 		if err != nil {
 			log.Fatal(err)
 		}
 
-	
-		year, month, day, fileWeek := ParseContact(fptr)
+		if strings.Contains(file.Name(), "RD") {
+			continue
+		}
+
+		year, month, day, fileWeek := ParseContact(file.Name())
 		dirWeek, _ := strconv.Atoi(filepath.Base(path)[1:])
 		isFilenameTheSame := file.Name() == FixFilename(file.Name())
-		
-                // don't use defer, close file after read
-                fptr.Close()
+
+		// don't use defer, close file after read
+		fptr.Close()
 
 		if fileWeek == dirWeek && isFilenameTheSame {
 			actionNo = 0
@@ -250,18 +238,18 @@ func RepairFiles(actions []Message, shouldWriteChanges bool) {
 	for _, action := range actions {
 		if action.Action == "mv" && shouldWriteChanges {
 
-			dirPath, _ := path.Split(action.Data.Dest)
 			//check whatever dest directory exists, if not create it
-			_, err := os.Stat(dirPath)
+			_, err := os.Stat(action.Data.Dest)
 			if os.IsNotExist(err) {
-				err := os.Mkdir(dirPath, 0775)
+				err := os.Mkdir(action.Data.Dest, 0775)
 				if err != nil {
 					log.Fatal(err)
 				}
 			}
 
 			// move file to
-			e := os.Rename(action.Data.File, action.Data.Dest)
+			_, filename := filepath.Split(action.Data.File)
+			e := os.Rename(action.Data.File, path.Join(action.Data.Dest, filename))
 			if e != nil {
 				log.Fatal(e)
 			}
