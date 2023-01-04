@@ -10,7 +10,7 @@ import (
 	"io"
 	"log"
 	"os"
-//	"path"
+	//	"path"
 	"path/filepath"
 	"regexp"
 	"strconv"
@@ -239,8 +239,8 @@ func RepairFiles(actions []Message, shouldWriteChanges bool) {
 		if action.Action == "mv" && shouldWriteChanges {
 
 			//check whatever dest directory exists, if not create it
-                        dir, _ := filepath.Split(action.Data.Dest)
-                        _, err := os.Stat(dir)
+			dir, _ := filepath.Split(action.Data.Dest)
+			_, err := os.Stat(dir)
 			if os.IsNotExist(err) {
 				err := os.Mkdir(dir, 0775)
 				if err != nil {

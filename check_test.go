@@ -33,6 +33,19 @@ func TestReportRundown(t *testing.T) {
 	}
 }
 
+func TestReportContact(t *testing.T) {
+
+	path := filepath.Join("test", "data")
+	files, err := ioutil.ReadDir(path)
+	if err != nil {
+		t.Error("Error opening test folder")
+	}
+	t.Log(files)
+
+	ReportContacts(filepath.Join("test", "data"), path, files)
+
+}
+
 // Test that Message struct is created and formatted right
 func TestFormatMessage(t *testing.T) {
 	message := Message{
