@@ -31,7 +31,16 @@
   go build
   ```
 
-## Usage
+## Automated run
+
+Program is set to run automatically on `swamp` server. Now it is triggered every Monday 01:00 AM by following cronjob:
+
+```
+0 1 * * MON /usr/bin/env bash -c 'export ANNOVA=/mnt/cro.cz/annova/export-avo; /bin/openmedia-check -i $ANNOVA -w > /root/openmedia_check_log.json 2>&1'
+```
+
+
+## Manual run
 
 This program can operate directly on $ANNOVA path (sorting new-comming files) or separate *week* folder(s) i.e: _W01-W53_.
 The OpenMedia export folder must accessible (should mounted if you are on Linux machine).
@@ -44,15 +53,6 @@ export ANNOVA=/mnt/cro.cz/
 ```
 
 If it is all set well, you can scan any system directory containing rundown files, for its stats disk operations.
-
-
-## Automated run
-
-Program is set to run automatically on `swamp` server. Now it is triggered every Monday 01:00 AM by following cronjob:
-
-```
-0 1 * * MON /usr/bin/env bash -c 'export ANNOVA=/mnt/cro.cz/annova/export-avo; /bin/openmedia-check -i $ANNOVA -w > /root/openmedia_check_log.json 2>&1'
-```
 
 
 The basic usage is as follows:
