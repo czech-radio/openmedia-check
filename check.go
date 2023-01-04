@@ -96,7 +96,7 @@ func ReportRundowns(annova string, path string, files []os.FileInfo) []Message {
 			log.Fatal(err)
 		}
 
-		if strings.Contains(file.Name(), "CT") {
+		if !strings.Contains(file.Name(), "RD") {
 			continue
 		}
 
@@ -193,7 +193,7 @@ func ReportContacts(annova string, path string, files []os.FileInfo) []Message {
 			log.Fatal(err)
 		}
 
-		if strings.Contains(file.Name(), "RD") {
+		if !strings.Contains(file.Name(), "CT") {
 			continue
 		}
 
@@ -289,7 +289,7 @@ func RemoveEmptyLines(annova string, path string, files []os.FileInfo) {
 	}
 }
 
-// FixFilename (unimplemented) should fix the filenames to unified format
+// FixFilename fixes filenames to standard form.
 func FixFilename(orig string) string {
 	var modified string = orig
 
